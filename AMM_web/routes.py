@@ -1,0 +1,10 @@
+"""constants pertaining to the routes of the web application"""
+
+HOME_ROUTE = "/"
+ABOUT_ROUTE = "/about"
+CONTACT_ROUTE = "/contact"
+LOGIN_ROUTE = "/login"
+SIGNUP_ROUTE = "/signup"
+PRIVACY_ROUTE = "/privacy"
+TERMS_ROUTE = "/terms"
+DASHBOARD_ROUTE = "/dashboard"
