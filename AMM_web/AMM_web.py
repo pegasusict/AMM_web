@@ -31,3 +31,16 @@ app.add_page(signup, SIGNUP_ROUTE)
 app.add_page(privacy, PRIVACY_ROUTE)
 app.add_page(terms, TERMS_ROUTE)
 app.add_page(dashboard, DASHBOARD_ROUTE)
+
+
+def callback():
+    return rx.script("""
+    const params = new URLSearchParams(window.location.search);
+    const token = params.get("token");
+    if (token) {
+        localStorage.setItem("auth_token", token);
+        window.location.href = "/";
+    } else {
+        alert("Login failed");
+    }
+    """)
