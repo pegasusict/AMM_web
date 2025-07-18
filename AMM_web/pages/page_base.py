@@ -1,5 +1,6 @@
 import reflex as rx
-from ..components import navbar, footer
+
+from ..components import navbar, footer, player_widget
 
 
 def page_base(func):
@@ -14,9 +15,12 @@ def page_base(func):
 
     def wrapper():
         return rx.container(
+            rx.script(src="/graphql/js_client.js", is_module=True),
+            rx.script(src="/graphql/subscriptions.js", is_module=True),
             rx.color_mode.button(position="bottom-left"),
             rx.hstack(
                 navbar(),
+                player_widget(),
                 func(),
                 footer(),
             ),

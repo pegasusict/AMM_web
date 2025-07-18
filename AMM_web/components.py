@@ -5,6 +5,7 @@ from datetime import datetime
 import reflex as rx
 
 from AMM_web import routes
+from state.player_state import PlayerState
 
 
 def navbar_logo() -> rx.Component:
@@ -43,30 +44,12 @@ def navbar() -> rx.Component:
                 ),
                 rx.hstack(
                     navbar_link("Home", routes.HOME_ROUTE),
-                    # rx.menu.root(
-                    #     rx.menu.trigger(
-                    #         rx.button(
-                    #             rx.text(
-                    #                 "Services",
-                    #                 size="4",
-                    #                 weight="medium",
-                    #             ),
-                    #             rx.icon("chevron-down"),
-                    #             weight="medium",
-                    #             variant="ghost",
-                    #             size="3",
-                    #         ),
-                    #     ),
-                    #     rx.menu.content(
-                    #         rx.menu.item("Service 1"),
-                    #         rx.menu.item("Service 2"),
-                    #         rx.menu.item("Service 3"),
-                    #     ),
-                    # ),
                     navbar_link("About", routes.ABOUT_ROUTE),
                     navbar_link("Contact", routes.CONTACT_ROUTE),
                     navbar_link("Login", routes.LOGIN_ROUTE),
                     navbar_link("Sign Up", routes.SIGNUP_ROUTE),
+                    navbar_link("Terms & Conditions", routes.TERMS_ROUTE),
+                    navbar_link("Privacy Policy", routes.PRIVACY_ROUTE),
                     justify="end",
                     spacing="5",
                 ),
@@ -85,16 +68,12 @@ def navbar() -> rx.Component:
                     rx.menu.trigger(rx.icon("menu", size=30)),
                     rx.menu.content(
                         rx.menu.item("Home"),
-                        # rx.menu.sub(
-                        #     rx.menu.sub_trigger("Services"),
-                        #     rx.menu.sub_content(
-                        #         rx.menu.item("Service 1"),
-                        #         rx.menu.item("Service 2"),
-                        #         rx.menu.item("Service 3"),
-                        #     ),
-                        # ),
                         rx.menu.item("About"),
                         rx.menu.item("Contact"),
+                        rx.menu.item("Login"),
+                        rx.menu.item("Sign Up"),
+                        rx.menu.item("Terms & Conditions"),
+                        rx.menu.item("Privacy Policy"),
                     ),
                     justify="end",
                 ),
@@ -126,4 +105,15 @@ def footer() -> rx.Component:
         ),
         padding="1em",
         width="100%",
+    )
+
+
+def logout_button():
+    return rx.button(
+        "Logout",
+        on_click=rx.script("""
+            localStorage.removeItem("auth_token");
+            fetch('http://localhost:8000/auth/logout', {method: 'POST', credentials: 'include'});
+            window.location.href = '/login';
+        """),  # type: ignore
     )

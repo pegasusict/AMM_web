@@ -12,14 +12,7 @@ from AMM_web.pages import (
     terms,
     dashboard,
 )
-from AMM_web.routes import (
-    HOME_ROUTE,
-    ABOUT_ROUTE,
-    CONTACT_ROUTE,
-    LOGIN_ROUTE,
-    SIGNUP_ROUTE,
-)
-from AMM_web.routes import TERMS_ROUTE, DASHBOARD_ROUTE, PRIVACY_ROUTE
+from AMM_web.routes import HOME_ROUTE, ABOUT_ROUTE, CONTACT_ROUTE, LOGIN_ROUTE, SIGNUP_ROUTE, TERMS_ROUTE, DASHBOARD_ROUTE, PRIVACY_ROUTE
 
 app = rx.App()
 
