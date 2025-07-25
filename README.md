@@ -3,6 +3,7 @@
 ## Web based client
 
 [![Codacy Badge](https://app.codacy.com/project/badge/Grade/7dccd15d9b7e468ea76696ea5fe39d66)](https://app.codacy.com/gh/pegasusict/AMM_web/dashboard?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_grade)
+
 __AMM__ is a music management system for very large collections.
 
 It has the following processing capabilities:
