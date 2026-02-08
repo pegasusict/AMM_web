@@ -1,18 +1,20 @@
-"""Sign up page of the application."""
+"""Login page of the application."""
 
 import reflex as rx
-from page_base import page_base
+
+from ..components import navbar, footer
 
 
-@page_base
 def signup() -> rx.Component:
-    """Sign up page of the application
+    """About page of the application
     Returns:
-        rx.Component: sign up page
+        rx.Component: about page
     """
     return rx.container(
-        rx.vstack(
-            rx.heading("Sign Up", size="2"),
-            rx.text("Please enter your details to create an account."),
-        )
+        rx.color_mode.button(position="bottom-left"),
+        rx.hstack(
+            navbar(),
+            rx.container(),
+            footer(),
+        ),
     )

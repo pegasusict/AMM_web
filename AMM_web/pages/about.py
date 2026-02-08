@@ -1,18 +1,24 @@
 """About page of the application."""
 
 import reflex as rx
-from page_base import page_base
+
+# from states import State
+
+from ..components import navbar, footer
 
 
-@page_base
 def about() -> rx.Component:
     """About page of the application
     Returns:
         rx.Component: about page
     """
     return rx.container(
+        rx.color_mode.button(position="bottom-left"),
+        rx.hstack(
+            navbar(),
+            rx.container(
                 rx.vstack(
-                    rx.heading("About the AMM Web Application", size="2"),
+                    rx.heading("About the AMM Web Application", size="2xl"),
                     rx.text(
                         "This is the about page of the AMM web application. "
                         "You can find more information about the application "
@@ -23,5 +29,8 @@ def about() -> rx.Component:
                         "with a seamless experience in managing their music. "
                         "It offers a variety of features and tools to help users."
                     ),
-                )
+                ),
+                footer(),
+            ),
+        ),
     )
