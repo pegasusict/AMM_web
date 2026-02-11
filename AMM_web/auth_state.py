@@ -3,15 +3,11 @@
 from __future__ import annotations
 
 import json
-import os
 from typing import Any
 
-import httpx
 import reflex as rx
 
 from .graphql import gql
-
-GRAPHQL_URL = os.getenv("AMM_GRAPHQL_URL", "http://localhost:8000/graphql")
 
 
 class AuthState(rx.State):
@@ -35,6 +31,17 @@ class AuthState(rx.State):
     def is_authenticated(self) -> bool:
         return bool(self.access_token)
 
+    @rx.var
+    def role_name(self) -> str:
+        user = self.user or {}
+        role = str(user.get("role") or "")
+        return role.upper()
+
+    @rx.var
+    def is_admin(self) -> bool:
+        role = self.role_name
+        return role == "ADMIN" or role.endswith(".ADMIN")
+
     def clear_auth(self) -> None:
         self.access_token = ""
         self.refresh_token = ""
@@ -53,23 +60,25 @@ class AuthState(rx.State):
         """
         variables = {"idToken": id_token}
 
-        async with httpx.AsyncClient() as client:
-            resp = await client.post(
-                GRAPHQL_URL,
-                json={"query": mutation, "variables": variables},
-            )
-            data = resp.json()
+        try:
+            data = await gql(mutation, variables=variables)
+        except Exception as exc:
+            self.login_error = f"Login failed: {exc}"
+            return None
 
         if "errors" in data:
             self.login_error = data["errors"][0].get("message", "Login failed")
             return None
 
-        payload = data["data"]["loginWithGoogle"]
-        self.access_token = payload["accessToken"]
-        self.refresh_token = payload["refreshToken"]
-        self._user_json = json.dumps(payload["user"])
+        payload = (data.get("data") or {}).get("loginWithGoogle") or {}
+        self.access_token = payload.get("accessToken") or payload.get("access_token") or ""
+        self.refresh_token = payload.get("refreshToken") or payload.get("refresh_token") or ""
+        self._user_json = json.dumps(payload.get("user") or {})
+        if not self.access_token:
+            self.login_error = "Login failed: missing access token"
+            return None
         self.login_error = ""
-        return rx.redirect("/")
+        return rx.redirect("/dashboard")
 
     async def gql(self, query: str, variables: dict[str, Any] | None = None) -> dict[str, Any]:
         """Authenticated GraphQL helper using stored access token."""
@@ -78,3 +87,11 @@ class AuthState(rx.State):
     def request_google_refresh(self) -> rx.EventSpec:
         """Prompt Google One Tap to re-issue an ID token."""
         return rx.call_script("window.amm_google_prompt && window.amm_google_prompt();")
+
+    def require_admin(self) -> rx.EventSpec | None:
+        """Guard admin-only routes."""
+        if not self.is_authenticated:
+            return rx.redirect("/login")
+        if not self.is_admin:
+            return rx.redirect("/dashboard")
+        return None

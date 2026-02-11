@@ -7,6 +7,7 @@ import reflex as rx
 
 from AMM_web import routes
 from AMM_web.auth_state import AuthState
+from AMM_web.state.server_state import ServerState
 
 
 def navbar_logo() -> rx.Component:
@@ -36,79 +37,124 @@ def navbar() -> rx.Component:
         rx.Component: Navbar component
     """
     return rx.box(
-        rx.desktop_only(
-            rx.hstack(
+        rx.vstack(
+            rx.desktop_only(
                 rx.hstack(
-                    navbar_logo(),
-                    navbar_title(),
-                    align_items="center",
-                ),
-                rx.hstack(
-                    navbar_link("Home", routes.HOME_ROUTE),
-                    # rx.menu.root(
-                    #     rx.menu.trigger(
-                    #         rx.button(
-                    #             rx.text(
-                    #                 "Services",
-                    #                 size="4",
-                    #                 weight="medium",
-                    #             ),
-                    #             rx.icon("chevron-down"),
-                    #             weight="medium",
-                    #             variant="ghost",
-                    #             size="3",
-                    #         ),
-                    #     ),
-                    #     rx.menu.content(
-                    #         rx.menu.item("Service 1"),
-                    #         rx.menu.item("Service 2"),
-                    #         rx.menu.item("Service 3"),
-                    #     ),
-                    # ),
-                    navbar_link("About", routes.ABOUT_ROUTE),
-                    navbar_link("Contact", routes.CONTACT_ROUTE),
-                    navbar_link("Login", routes.LOGIN_ROUTE),
-                    navbar_link("Sign Up", routes.SIGNUP_ROUTE),
-                    justify="end",
-                    spacing="5",
-                ),
-                justify="between",
-                align_items="center",
-            ),
-        ),
-        rx.mobile_and_tablet(
-            rx.hstack(
-                rx.hstack(
-                    navbar_logo(),
-                    navbar_title(),
-                    align_items="center",
-                ),
-                rx.menu.root(
-                    rx.menu.trigger(rx.icon("menu", size=30)),
-                    rx.menu.content(
-                        rx.menu.item("Home"),
-                        # rx.menu.sub(
-                        #     rx.menu.sub_trigger("Services"),
-                        #     rx.menu.sub_content(
+                    rx.hstack(
+                        navbar_logo(),
+                        navbar_title(),
+                        align_items="center",
+                    ),
+                    rx.hstack(
+                        navbar_link("Home", routes.HOME_ROUTE),
+                        # rx.menu.root(
+                        #     rx.menu.trigger(
+                        #         rx.button(
+                        #             rx.text(
+                        #                 "Services",
+                        #                 size="4",
+                        #                 weight="medium",
+                        #             ),
+                        #             rx.icon("chevron-down"),
+                        #             weight="medium",
+                        #             variant="ghost",
+                        #             size="3",
+                        #         ),
+                        #     ),
+                        #     rx.menu.content(
                         #         rx.menu.item("Service 1"),
                         #         rx.menu.item("Service 2"),
                         #         rx.menu.item("Service 3"),
                         #     ),
                         # ),
-                        rx.menu.item("About"),
-                        rx.menu.item("Contact"),
+                        navbar_link("About", routes.ABOUT_ROUTE),
+                        navbar_link("Contact", routes.CONTACT_ROUTE),
+                        rx.cond(
+                            AuthState.is_admin,
+                            navbar_link("Admin", routes.ADMIN_USERS_ROUTE),
+                            rx.fragment(),
+                        ),
+                        navbar_link("Login", routes.LOGIN_ROUTE),
+                        navbar_link("Sign Up", routes.SIGNUP_ROUTE),
+                        justify="end",
+                        spacing="5",
                     ),
-                    justify="end",
+                    justify="between",
+                    align_items="center",
                 ),
-                justify="between",
-                align_items="center",
             ),
+            rx.mobile_and_tablet(
+                rx.hstack(
+                    rx.hstack(
+                        navbar_logo(),
+                        navbar_title(),
+                        align_items="center",
+                    ),
+                    rx.menu.root(
+                        rx.menu.trigger(rx.icon("menu", size=30)),
+                        rx.menu.content(
+                            rx.menu.item("Home"),
+                            # rx.menu.sub(
+                            #     rx.menu.sub_trigger("Services"),
+                            #     rx.menu.sub_content(
+                            #         rx.menu.item("Service 1"),
+                            #         rx.menu.item("Service 2"),
+                            #         rx.menu.item("Service 3"),
+                            #     ),
+                            # ),
+                            rx.menu.item("About"),
+                            rx.menu.item("Contact"),
+                            rx.cond(
+                                AuthState.is_admin,
+                                rx.link("Admin", href=routes.ADMIN_USERS_ROUTE),
+                                rx.fragment(),
+                            ),
+                        ),
+                        justify="end",
+                    ),
+                    justify="between",
+                    align_items="center",
+                ),
+            ),
+            server_status_banner(),
+            spacing="2",
+            width="100%",
         ),
         padding="1em",
-        # position="fixed",
-        # top="0px",
-        # z_index="5",
         width="100%",
+    )
+
+
+def server_status_banner() -> rx.Component:
+    return rx.cond(
+        ServerState.server_ok == True,
+        rx.box(
+            rx.text(ServerState.server_message, color="#14532D", size="2"),
+            background="#DCFCE7",
+            border="1px solid #86EFAC",
+            border_radius="8px",
+            padding="0.5em 0.75em",
+            width="100%",
+        ),
+        rx.cond(
+            ServerState.server_ok == False,
+            rx.box(
+                rx.text(ServerState.server_message, color="#7F1D1D", size="2"),
+                background="#FEE2E2",
+                border="1px solid #FCA5A5",
+                border_radius="8px",
+                padding="0.5em 0.75em",
+                width="100%",
+            ),
+            rx.box(
+                rx.text(ServerState.server_message, color="#78350F", size="2"),
+                background="#FEF3C7",
+                border="1px solid #FCD34D",
+                border_radius="8px",
+                padding="0.5em 0.75em",
+                width="100%",
+            ),
+        ),
     )
 
 
@@ -199,4 +245,61 @@ def auth_gate(content: rx.Component) -> rx.Component:
             ),
             padding="4em 0",
         ),
+    )
+
+
+def admin_gate(content: rx.Component) -> rx.Component:
+    """Gate content behind admin access."""
+    return rx.cond(
+        AuthState.is_authenticated,
+        rx.cond(
+            AuthState.is_admin,
+            content,
+            rx.center(
+                rx.vstack(
+                    rx.text("You do not have permission to view this page."),
+                    rx.link("Go to Dashboard", href=routes.DASHBOARD_ROUTE),
+                    spacing="3",
+                ),
+                padding="4em 0",
+            ),
+        ),
+        rx.center(
+            rx.vstack(
+                rx.text("Please sign in to continue."),
+                rx.link("Login", href=routes.LOGIN_ROUTE),
+                spacing="3",
+            ),
+            padding="4em 0",
+        ),
+    )
+
+
+def player_bar() -> rx.Component:
+    """Lightweight player UI shown to authenticated users."""
+    return rx.box(
+        rx.hstack(
+            rx.icon("music", size=20),
+            rx.text("Now Playing", weight="medium"),
+            rx.spacer(),
+            rx.button(rx.icon("skip-back"), size="2", variant="ghost"),
+            rx.button(rx.icon("play"), size="2", variant="solid"),
+            rx.button(rx.icon("skip-forward"), size="2", variant="ghost"),
+            spacing="3",
+            align_items="center",
+            width="100%",
+        ),
+        padding="0.75em 1em",
+        border_top="1px solid #E2E8F0",
+        width="100%",
+    )
+
+
+def player_shell(content: rx.Component) -> rx.Component:
+    """Wrap content with the player bar when authenticated."""
+    return rx.vstack(
+        content,
+        rx.cond(AuthState.is_authenticated, player_bar(), rx.fragment()),
+        spacing="0",
+        width="100%",
     )

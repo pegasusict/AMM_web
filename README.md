@@ -40,3 +40,25 @@ The system has a icecast like playbacksystem which works on a per-user basis.
 
 audiobook support?
 crossfading
+
+## Client Connectivity Helpers
+
+- Offline/mock mode for AMM_web:
+  - `export AMM_OFFLINE_MODE=1`
+  - This lets login/dashboard/search run without a live server.
+- GraphQL endpoint override:
+  - `export AMM_GRAPHQL_URL=http://127.0.0.1:8000/graphql`
+
+## Server Contract Checklist
+
+Run the integration checks once AMM_core is running:
+
+```bash
+.venv/bin/python scripts/server_contract_check.py --url http://127.0.0.1:8000/graphql
+```
+
+Include auth-only checks (playlists/queue) with a token:
+
+```bash
+AMM_ACCESS_TOKEN="<jwt>" .venv/bin/python scripts/server_contract_check.py
+```

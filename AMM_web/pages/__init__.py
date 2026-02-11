@@ -8,6 +8,8 @@ from .signup import signup
 from .privacy import privacy
 from .terms import terms
 from .dashboard import dashboard
+from .search import search
+from .admin_users import admin_users
 
 __all__ = [
     "index",
@@ -18,4 +20,6 @@ __all__ = [
     "privacy",
     "terms",
     "dashboard",
+    "search",
+    "admin_users",
 ]

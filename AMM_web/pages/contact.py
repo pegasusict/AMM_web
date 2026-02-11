@@ -4,7 +4,7 @@ import reflex as rx
 
 # from states import ContactState
 
-from ..components import navbar, footer
+from ..components import footer, navbar, player_shell
 
 
 def contact() -> rx.Component:
@@ -14,17 +14,19 @@ def contact() -> rx.Component:
     """
     return rx.container(
         rx.color_mode.button(position="bottom-left"),
-        rx.vstack(
-            navbar(),
-            rx.container(
-                rx.vstack(
-                    rx.heading("Contact us", size="2xl"),
-                    rx.text(
-                        "If you have any questions or feedback,"
-                        " please feel free to reach out to us."
+        player_shell(
+            rx.vstack(
+                navbar(),
+                rx.container(
+                    rx.vstack(
+                        rx.heading("Contact us", size="2xl"),
+                        rx.text(
+                            "If you have any questions or feedback,"
+                            " please feel free to reach out to us."
+                        ),
                     ),
                 ),
-            ),
-            footer(),
+                footer(),
+            )
         ),
     )

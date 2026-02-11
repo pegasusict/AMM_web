@@ -2,7 +2,7 @@
 
 import reflex as rx
 
-from ..components import navbar, footer
+from ..components import footer, navbar, player_shell
 
 
 def index() -> rx.Component:
@@ -12,18 +12,20 @@ def index() -> rx.Component:
     """
     return rx.container(
         rx.color_mode.button(position="bottom-left"),
-        rx.hstack(
-            navbar(),
-            rx.container(
-                rx.vstack(
-                    rx.heading("Welcome to the AMM Web Application", size="2xl"),
-                    rx.text(
-                        "This is the home page of the AMM web application. "
-                        "You can find more information about the application "
-                        "and its features here."
+        player_shell(
+            rx.hstack(
+                navbar(),
+                rx.container(
+                    rx.vstack(
+                        rx.heading("Welcome to the AMM Web Application", size="2xl"),
+                        rx.text(
+                            "This is the home page of the AMM web application. "
+                            "You can find more information about the application "
+                            "and its features here."
+                        ),
                     ),
                 ),
-            ),
-            footer(),
+                footer(),
+            )
         ),
     )

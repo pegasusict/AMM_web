@@ -2,8 +2,8 @@
 
 import reflex as rx
 
-from ..components import navbar, footer, google_sign_in_button
 from ..auth_state import AuthState
+from ..components import footer, google_sign_in_button, navbar, player_shell
 
 
 def login() -> rx.Component:
@@ -13,20 +13,22 @@ def login() -> rx.Component:
     """
     return rx.container(
         rx.color_mode.button(position="bottom-left"),
-        rx.vstack(
-            navbar(),
-            rx.center(
-                rx.vstack(
-                    rx.heading("Sign in"),
-                    google_sign_in_button(),
-                    rx.cond(
-                        AuthState.login_error != "",
-                        rx.text(AuthState.login_error, color="red"),
+        player_shell(
+            rx.vstack(
+                navbar(),
+                rx.center(
+                    rx.vstack(
+                        rx.heading("Sign in"),
+                        google_sign_in_button(),
+                        rx.cond(
+                            AuthState.login_error != "",
+                            rx.text(AuthState.login_error, color="red"),
+                        ),
+                        spacing="4",
                     ),
-                    spacing="4",
+                    padding="4em 0",
                 ),
-                padding="4em 0",
-            ),
-            footer(),
+                footer(),
+            )
         ),
     )

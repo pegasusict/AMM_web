@@ -4,7 +4,7 @@ import reflex as rx
 
 # from states import State
 
-from ..components import navbar, footer
+from ..components import footer, navbar, player_shell
 
 
 def about() -> rx.Component:
@@ -14,23 +14,25 @@ def about() -> rx.Component:
     """
     return rx.container(
         rx.color_mode.button(position="bottom-left"),
-        rx.hstack(
-            navbar(),
-            rx.container(
-                rx.vstack(
-                    rx.heading("About the AMM Web Application", size="2xl"),
-                    rx.text(
-                        "This is the about page of the AMM web application. "
-                        "You can find more information about the application "
-                        "and its features here."
+        player_shell(
+            rx.hstack(
+                navbar(),
+                rx.container(
+                    rx.vstack(
+                        rx.heading("About the AMM Web Application", size="2xl"),
+                        rx.text(
+                            "This is the about page of the AMM web application. "
+                            "You can find more information about the application "
+                            "and its features here."
+                        ),
+                        rx.text(
+                            "The AMM web application is designed to provide users "
+                            "with a seamless experience in managing their music. "
+                            "It offers a variety of features and tools to help users."
+                        ),
                     ),
-                    rx.text(
-                        "The AMM web application is designed to provide users "
-                        "with a seamless experience in managing their music. "
-                        "It offers a variety of features and tools to help users."
-                    ),
+                    footer(),
                 ),
-                footer(),
-            ),
+            )
         ),
     )

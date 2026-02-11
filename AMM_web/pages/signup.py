@@ -2,7 +2,7 @@
 
 import reflex as rx
 
-from ..components import navbar, footer
+from ..components import footer, navbar, player_shell
 
 
 def signup() -> rx.Component:
@@ -12,9 +12,11 @@ def signup() -> rx.Component:
     """
     return rx.container(
         rx.color_mode.button(position="bottom-left"),
-        rx.hstack(
-            navbar(),
-            rx.container(),
-            footer(),
+        player_shell(
+            rx.hstack(
+                navbar(),
+                rx.container(),
+                footer(),
+            )
         ),
     )
