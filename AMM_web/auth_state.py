@@ -48,7 +48,7 @@ class AuthState(rx.State):
         self._user_json = ""
         self.login_error = ""
 
-    async def login_with_google(self, id_token: str) -> rx.EventSpec | None:
+    async def login_with_google(self, id_token: str) -> Any | None:
         mutation = """
         mutation LoginWithGoogle($idToken: String!) {
           loginWithGoogle(idToken: $idToken) {
@@ -80,15 +80,22 @@ class AuthState(rx.State):
         self.login_error = ""
         return rx.redirect("/dashboard")
 
+    async def submit_google_login(self) -> Any | None:
+        """Submit login using the latest Google ID token from browser JS."""
+        return rx.call_script(
+            "window.__amm_google_id_token || ''",
+            callback=AuthState.login_with_google,
+        )
+
     async def gql(self, query: str, variables: dict[str, Any] | None = None) -> dict[str, Any]:
         """Authenticated GraphQL helper using stored access token."""
         return await gql(query, variables=variables, access_token=self.access_token)
 
-    def request_google_refresh(self) -> rx.EventSpec:
+    def request_google_refresh(self) -> Any:
         """Prompt Google One Tap to re-issue an ID token."""
         return rx.call_script("window.amm_google_prompt && window.amm_google_prompt();")
 
-    def require_admin(self) -> rx.EventSpec | None:
+    def require_admin(self) -> Any | None:
         """Guard admin-only routes."""
         if not self.is_authenticated:
             return rx.redirect("/login")

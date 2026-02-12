@@ -25,7 +25,7 @@ def search() -> rx.Component:
                 navbar(),
                 rx.container(
                     rx.vstack(
-                        rx.heading("GraphQL Search", size="2xl"),
+                        rx.heading("GraphQL Search", size="8"),
                         rx.text(
                             "Run any GraphQL query against AMM_core. "
                             "Authenticated queries will use your session token."
@@ -76,7 +76,11 @@ def search() -> rx.Component:
                             SearchState.error,
                             rx.text(SearchState.error, color="red"),
                             rx.code_block(
-                                SearchState.response or "Response will appear here.",
+                                rx.cond(
+                                    SearchState.response,
+                                    SearchState.response,
+                                    "Response will appear here.",
+                                ),
                                 language="json",
                             ),
                         ),

@@ -19,7 +19,7 @@ def contact() -> rx.Component:
                 navbar(),
                 rx.container(
                     rx.vstack(
-                        rx.heading("Contact us", size="2xl"),
+                        rx.heading("Contact us", size="8"),
                         rx.text(
                             "If you have any questions or feedback,"
                             " please feel free to reach out to us."

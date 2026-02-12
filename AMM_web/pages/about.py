@@ -19,7 +19,7 @@ def about() -> rx.Component:
                 navbar(),
                 rx.container(
                     rx.vstack(
-                        rx.heading("About the AMM Web Application", size="2xl"),
+                        rx.heading("About the AMM Web Application", size="8"),
                         rx.text(
                             "This is the about page of the AMM web application. "
                             "You can find more information about the application "

@@ -19,7 +19,13 @@ def login() -> rx.Component:
                 rx.center(
                     rx.vstack(
                         rx.heading("Sign in"),
-                        google_sign_in_button(),
+                        rx.button(
+                            "Complete Google Sign In",
+                            id="google_signin_submit",
+                            on_click=AuthState.submit_google_login,
+                            display="none",
+                        ),
+                        google_sign_in_button(submit_button_id="google_signin_submit"),
                         rx.cond(
                             AuthState.login_error != "",
                             rx.text(AuthState.login_error, color="red"),

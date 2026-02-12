@@ -5,6 +5,7 @@ from pydantic import AliasChoices, BaseModel, ConfigDict, Field
 
 class TrackSummary(BaseModel):
     id: int | None = None
+    mbid: str | None = None
     title: str | None = None
 
 

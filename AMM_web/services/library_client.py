@@ -19,7 +19,7 @@ class LibraryService:
         query GetTracks($limit: Int!, $offset: Int!) {
           getTracks(limit: $limit, offset: $offset) {
             total
-            items { id title }
+            items { id mbid }
           }
         }
         """
@@ -79,7 +79,7 @@ class LibraryService:
     async def get_track(self, track_id: int, access_token: str | None = None) -> TrackSummary | None:
         query = """
         query GetTrack($trackId: Int!) {
-          getTrack(trackId: $trackId) { id title }
+          getTrack(trackId: $trackId) { id mbid }
         }
         """
         data = await gql(query, variables={"trackId": track_id}, access_token=access_token)

@@ -3,8 +3,7 @@
 import reflex as rx
 
 from AMM_web.auth_state import AuthState
-from AMM_web.pages import about, admin_users, contact, dashboard, index, login, privacy, search, signup, terms
-from AMM_web.state.admin_users_state import AdminUsersState
+from AMM_web.pages import about, contact, dashboard, index, login, privacy, search, signup, terms
 from AMM_web.state.library_state import LibraryState
 from AMM_web.state.server_state import ServerState
 from AMM_web.routes import (
@@ -16,8 +15,7 @@ from AMM_web.routes import (
     TERMS_ROUTE,
     DASHBOARD_ROUTE,
     PRIVACY_ROUTE,
-    SEARCH_ROUTE,
-    ADMIN_USERS_ROUTE,
+    SEARCH_ROUTE
 )
 
 app = rx.App()
@@ -34,16 +32,7 @@ app.add_page(
     DASHBOARD_ROUTE,
     on_load=[
         ServerState.check_server,
-        LibraryState.load_library(AuthState.access_token),
+        LibraryState.load_library(access_token=AuthState.access_token), # Load the user's library when the dashboard page is accessed
     ],
 )
 app.add_page(search, SEARCH_ROUTE, on_load=ServerState.check_server)
-app.add_page(
-    admin_users,
-    ADMIN_USERS_ROUTE,
-    on_load=[
-        ServerState.check_server,
-        AuthState.require_admin,
-        AdminUsersState.load_users(AuthState.access_token, AuthState.is_admin),
-    ],
-)

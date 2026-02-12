@@ -102,7 +102,7 @@ def main() -> int:
             url=args.url,
             query=(
                 "query GetTracks($limit: Int!, $offset: Int!) { "
-                "getTracks(limit: $limit, offset: $offset) { total items { id title } } }"
+                "getTracks(limit: $limit, offset: $offset) { total items { id mbid } } }"
             ),
             variables={"limit": 3, "offset": 0},
             required_data_key="getTracks",
@@ -120,7 +120,7 @@ def main() -> int:
         run_check(
             name="query.getTrack",
             url=args.url,
-            query="query GetTrack($trackId: Int!) { getTrack(trackId: $trackId) { id title } }",
+            query="query GetTrack($trackId: Int!) { getTrack(trackId: $trackId) { id mbid } }",
             variables={"trackId": 1},
             required_data_key="getTrack",
         ),
@@ -199,4 +199,3 @@ def main() -> int:
 
 if __name__ == "__main__":
     sys.exit(main())
-

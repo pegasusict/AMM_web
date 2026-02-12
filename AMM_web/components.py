@@ -2,12 +2,31 @@
 
 from datetime import datetime
 import os
+from pathlib import Path
 
 import reflex as rx
 
 from AMM_web import routes
 from AMM_web.auth_state import AuthState
 from AMM_web.state.server_state import ServerState
+
+
+def _read_env_value(key: str) -> str:
+    """Read a config value from process env, with .env fallback."""
+    value = os.getenv(key, "")
+    if value:
+        return value
+    env_path = Path(".env")
+    if not env_path.exists():
+        return ""
+    for line in env_path.read_text(encoding="utf-8").splitlines():
+        entry = line.strip()
+        if not entry or entry.startswith("#") or "=" not in entry:
+            continue
+        name, raw = entry.split("=", 1)
+        if name.strip() == key:
+            return raw.strip().strip("'\"")
+    return ""
 
 
 def navbar_logo() -> rx.Component:
@@ -180,20 +199,24 @@ def footer() -> rx.Component:
 def google_sign_in_button(
     client_id: str | None = None,
     button_id: str = "google_signin_button",
+    submit_button_id: str = "google_signin_submit",
 ) -> rx.Component:
     """Reusable Google Sign-In button using GIS."""
-    client_id = client_id or os.getenv("AMM_GOOGLE_CLIENT_ID", "")
+    client_id = client_id or _read_env_value("AMM_GOOGLE_CLIENT_ID")
     return rx.box(
         rx.box(id=button_id),
         rx.script(
             """
             window.addEventListener("google_id_token", (e) => {
               const token = e.detail;
-              if (window.reflex_api && window.reflex_api.set_state) {
-                window.reflex_api.set_state("AuthState", "login_with_google", [token]);
+              window.__amm_google_id_token = token;
+              const submitButton = document.getElementById("%s");
+              if (submitButton) {
+                submitButton.click();
               }
             });
             """
+            % submit_button_id
         ),
         rx.script(
             f"""

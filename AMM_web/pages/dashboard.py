@@ -61,7 +61,11 @@ def dashboard() -> rx.Component:
                                         rx.foreach(
                                             LibraryState.tracks,
                                             lambda track: rx.text(
-                                                track.title or "Untitled"
+                                                rx.cond(
+                                                    track.mbid,
+                                                    track.mbid,
+                                                    f"Track #{track.id}",
+                                                )
                                             ),
                                         ),
                                         spacing="2",
@@ -74,7 +78,11 @@ def dashboard() -> rx.Component:
                                         rx.foreach(
                                             LibraryState.albums,
                                             lambda album: rx.text(
-                                                album.title or "Untitled"
+                                                rx.cond(
+                                                    album.title,
+                                                    album.title,
+                                                    "Untitled",
+                                                )
                                             ),
                                         ),
                                         spacing="2",
@@ -104,10 +112,15 @@ def dashboard() -> rx.Component:
                                             ),
                                             rx.vstack(
                                                 rx.text(
-                                                    LibraryState.now_playing.title
-                                                    if LibraryState.now_playing
-                                                    and LibraryState.now_playing.title
-                                                    else "Nothing playing"
+                                                    rx.cond(
+                                                        LibraryState.now_playing,
+                                                        rx.cond(
+                                                            LibraryState.now_playing.mbid,
+                                                            LibraryState.now_playing.mbid,
+                                                            "Nothing playing",
+                                                        ),
+                                                        "Nothing playing",
+                                                    )
                                                 ),
                                                 rx.foreach(
                                                     LibraryState.queue.track_ids,

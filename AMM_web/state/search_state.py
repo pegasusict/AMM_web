@@ -20,7 +20,7 @@ class SearchState(BaseState):
                 "query GetTracks($limit: Int!, $offset: Int!) {\\n"
                 "  getTracks(limit: $limit, offset: $offset) {\\n"
                 "    total\\n"
-                "    items { id title }\\n"
+                "    items { id mbid }\\n"
                 "  }\\n"
                 "}\\n",
                 "{\"limit\": 25, \"offset\": 0}",

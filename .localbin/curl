@@ -1,0 +1,38 @@
+#!/usr/bin/env bash
+set -euo pipefail
+out=""
+url=""
+while [ "$#" -gt 0 ]; do
+  case "$1" in
+    -o|--output)
+      out="$2"
+      shift 2
+      ;;
+    -L|-f|-s|-S|--fail|--silent|--show-error|--location|--progress-bar)
+      shift
+      ;;
+    --)
+      shift
+      break
+      ;;
+    -*)
+      shift
+      ;;
+    *)
+      url="$1"
+      shift
+      ;;
+  esac
+done
+if [ -z "$url" ] && [ "$#" -gt 0 ]; then
+  url="$1"
+fi
+if [ -z "$url" ]; then
+  echo "curl shim: missing URL" >&2
+  exit 2
+fi
+if [ -n "$out" ]; then
+  exec wget -qO "$out" "$url"
+else
+  exec wget -qO- "$url"
+fi
