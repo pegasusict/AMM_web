@@ -20,30 +20,40 @@ def _ro_field(label: str, value: str) -> rx.Component:
 
 
 def _track_row(track) -> rx.Component:
-    title = track.title or ""
-    mbid = track.mbid or ""
-    label = f"#{track.id}  {title}".strip() if track.id else "(unknown track)"
-    meta = mbid if mbid else "(no mbid)"
     return rx.box(
         rx.vstack(
             rx.hstack(
-                rx.text(label, weight="medium"),
+                rx.cond(
+                    track.id,
+                    rx.text(
+                        "#",
+                        track.id.to(str),
+                        "  ",
+                        rx.cond(track.title, track.title, ""),
+                        weight="medium",
+                    ),
+                    rx.text("(unknown track)", weight="medium"),
+                ),
                 rx.spacer(),
                 rx.button(
                     "View",
                     size="2",
                     variant="outline",
                     on_click=[
-                        SearchState.select_track(track.id or 0),
+                        SearchState.select_track(track.id),
                         SearchState.load_track(AuthState.access_token),
                     ],
-                    is_disabled=(track.id is None),
+                    is_disabled=rx.cond(track.id, False, True),
                 ),
                 spacing="3",
                 align_items="center",
                 width="100%",
             ),
-            rx.text(meta, size="2", color="gray"),
+            rx.text(
+                rx.cond(track.mbid, track.mbid, "(no mbid)"),
+                size="2",
+                color="gray",
+            ),
             spacing="1",
             width="100%",
         ),
@@ -55,21 +65,29 @@ def _track_row(track) -> rx.Component:
 
 
 def _album_row(album) -> rx.Component:
-    title = album.title or "(untitled)"
-    label = f"#{album.id}  {title}".strip() if album.id else "(unknown album)"
     return rx.box(
         rx.hstack(
-            rx.text(label, weight="medium"),
+            rx.cond(
+                album.id,
+                rx.text(
+                    "#",
+                    album.id.to(str),
+                    "  ",
+                    rx.cond(album.title, album.title, "(untitled)"),
+                    weight="medium",
+                ),
+                rx.text("(unknown album)", weight="medium"),
+            ),
             rx.spacer(),
             rx.button(
                 "View",
                 size="2",
                 variant="outline",
                 on_click=[
-                    SearchState.select_album(album.id or 0),
+                    SearchState.select_album(album.id),
                     SearchState.load_album(AuthState.access_token),
                 ],
-                is_disabled=(album.id is None),
+                is_disabled=rx.cond(album.id, False, True),
             ),
             spacing="3",
             align_items="center",
@@ -83,21 +101,29 @@ def _album_row(album) -> rx.Component:
 
 
 def _person_row(person) -> rx.Component:
-    name = person.full_name or "(no name)"
-    label = f"#{person.id}  {name}".strip() if person.id else "(unknown person)"
     return rx.box(
         rx.hstack(
-            rx.text(label, weight="medium"),
+            rx.cond(
+                person.id,
+                rx.text(
+                    "#",
+                    person.id.to(str),
+                    "  ",
+                    rx.cond(person.full_name, person.full_name, "(no name)"),
+                    weight="medium",
+                ),
+                rx.text("(unknown person)", weight="medium"),
+            ),
             rx.spacer(),
             rx.button(
                 "View",
                 size="2",
                 variant="outline",
                 on_click=[
-                    SearchState.select_person(person.id or 0),
+                    SearchState.select_person(person.id),
                     SearchState.load_person(AuthState.access_token),
                 ],
-                is_disabled=(person.id is None),
+                is_disabled=rx.cond(person.id, False, True),
             ),
             spacing="3",
             align_items="center",
@@ -111,21 +137,29 @@ def _person_row(person) -> rx.Component:
 
 
 def _label_row(label) -> rx.Component:
-    name = label.name or "(no name)"
-    title = f"#{label.id}  {name}".strip() if label.id else "(unknown label)"
     return rx.box(
         rx.hstack(
-            rx.text(title, weight="medium"),
+            rx.cond(
+                label.id,
+                rx.text(
+                    "#",
+                    label.id.to(str),
+                    "  ",
+                    rx.cond(label.name, label.name, "(no name)"),
+                    weight="medium",
+                ),
+                rx.text("(unknown label)", weight="medium"),
+            ),
             rx.spacer(),
             rx.button(
                 "View",
                 size="2",
                 variant="outline",
                 on_click=[
-                    SearchState.select_label(label.id or 0),
+                    SearchState.select_label(label.id),
                     SearchState.load_label(AuthState.access_token),
                 ],
-                is_disabled=(label.id is None),
+                is_disabled=rx.cond(label.id, False, True),
             ),
             spacing="3",
             align_items="center",
@@ -208,12 +242,12 @@ def search() -> rx.Component:
                                                     "",
                                                 ),
                                             ),
-                                            _ro_field("MBID", SearchState.selected_track.mbid or ""),
-                                            _ro_field("Title", SearchState.selected_track.title or ""),
+                                            _ro_field("MBID", rx.cond(SearchState.selected_track.mbid, SearchState.selected_track.mbid, "")),
+                                            _ro_field("Title", rx.cond(SearchState.selected_track.title, SearchState.selected_track.title, "")),
                                             rx.text("Edit View (read-only)", size="2", color="gray"),
                                             _ro_field("ID", SearchState.selected_track.id.to(str)),
-                                            _ro_field("MBID", SearchState.selected_track.mbid or ""),
-                                            _ro_field("Title", SearchState.selected_track.title or ""),
+                                            _ro_field("MBID", rx.cond(SearchState.selected_track.mbid, SearchState.selected_track.mbid, "")),
+                                            _ro_field("Title", rx.cond(SearchState.selected_track.title, SearchState.selected_track.title, "")),
                                             spacing="2",
                                             width="100%",
                                             align_items="start",
@@ -287,10 +321,10 @@ def search() -> rx.Component:
                                         rx.vstack(
                                             rx.heading("Album Detail", size="3"),
                                             _ro_field("ID", SearchState.selected_album.id.to(str)),
-                                            _ro_field("Title", SearchState.selected_album.title or ""),
+                                            _ro_field("Title", rx.cond(SearchState.selected_album.title, SearchState.selected_album.title, "")),
                                             rx.text("Edit View (read-only)", size="2", color="gray"),
                                             _ro_field("ID", SearchState.selected_album.id.to(str)),
-                                            _ro_field("Title", SearchState.selected_album.title or ""),
+                                            _ro_field("Title", rx.cond(SearchState.selected_album.title, SearchState.selected_album.title, "")),
                                             spacing="2",
                                             width="100%",
                                             align_items="start",
@@ -364,10 +398,10 @@ def search() -> rx.Component:
                                         rx.vstack(
                                             rx.heading("Person Detail", size="3"),
                                             _ro_field("ID", SearchState.selected_person.id.to(str)),
-                                            _ro_field("Full Name", SearchState.selected_person.full_name or ""),
+                                            _ro_field("Full Name", rx.cond(SearchState.selected_person.full_name, SearchState.selected_person.full_name, "")),
                                             rx.text("Edit View (read-only)", size="2", color="gray"),
                                             _ro_field("ID", SearchState.selected_person.id.to(str)),
-                                            _ro_field("Full Name", SearchState.selected_person.full_name or ""),
+                                            _ro_field("Full Name", rx.cond(SearchState.selected_person.full_name, SearchState.selected_person.full_name, "")),
                                             spacing="2",
                                             width="100%",
                                             align_items="start",
@@ -441,10 +475,10 @@ def search() -> rx.Component:
                                         rx.vstack(
                                             rx.heading("Label Detail", size="3"),
                                             _ro_field("ID", SearchState.selected_label.id.to(str)),
-                                            _ro_field("Name", SearchState.selected_label.name or ""),
+                                            _ro_field("Name", rx.cond(SearchState.selected_label.name, SearchState.selected_label.name, "")),
                                             rx.text("Edit View (read-only)", size="2", color="gray"),
                                             _ro_field("ID", SearchState.selected_label.id.to(str)),
-                                            _ro_field("Name", SearchState.selected_label.name or ""),
+                                            _ro_field("Name", rx.cond(SearchState.selected_label.name, SearchState.selected_label.name, "")),
                                             spacing="2",
                                             width="100%",
                                             align_items="start",
@@ -493,7 +527,7 @@ def search() -> rx.Component:
                                     lambda pl: rx.box(
                                         rx.vstack(
                                             rx.text(f"#{pl.id}  {pl.name}", weight="medium"),
-                                            _ro_field("Track IDs", ", ".join([str(i) for i in (pl.track_ids or [])])),
+                                            _ro_field("Track IDs", rx.cond(pl.track_ids, pl.track_ids.to(str), "[]")),
                                             spacing="2",
                                             width="100%",
                                             align_items="start",
@@ -529,7 +563,7 @@ def search() -> rx.Component:
                                 ),
                                 _ro_field(
                                     "Track IDs",
-                                    ", ".join([str(i) for i in (SearchState.queue.track_ids or [])]),
+                                    rx.cond(SearchState.queue.track_ids, SearchState.queue.track_ids.to(str), "[]"),
                                 ),
                                 spacing="3",
                                 width="100%",
@@ -558,11 +592,11 @@ def search() -> rx.Component:
                                     SearchState.task_display,
                                     lambda task: rx.box(
                                         rx.vstack(
-                                            _ro_field("Task ID", task.task_id or ""),
-                                            _ro_field("Type", task.task_type or ""),
-                                            _ro_field("Progress", (task.progress or 0).to(str)),
-                                            _ro_field("Start Time", task.start_time or ""),
-                                            _ro_field("Status", task.status or ""),
+                                            _ro_field("Task ID", rx.cond(task.task_id, task.task_id, "")),
+                                            _ro_field("Type", rx.cond(task.task_type, task.task_type, "")),
+                                            _ro_field("Progress", rx.cond(task.progress, task.progress.to(str), "0")),
+                                            _ro_field("Start Time", rx.cond(task.start_time, task.start_time, "")),
+                                            _ro_field("Status", rx.cond(task.status, task.status, "")),
                                             spacing="2",
                                             width="100%",
                                             align_items="start",
