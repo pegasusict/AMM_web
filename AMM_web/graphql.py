@@ -38,7 +38,14 @@ def _mock_paginated_tracks(variables: dict[str, Any] | None) -> dict[str, Any]:
     values = variables or {}
     limit = int(values.get("limit", 25))
     offset = int(values.get("offset", 0))
-    items = [{"id": offset + i + 1, "mbid": f"offline-track-{offset + i + 1}"} for i in range(limit)]
+    items = [
+        {
+            "id": offset + i + 1,
+            "mbid": f"offline-track-{offset + i + 1}",
+            "title": f"Offline Track {offset + i + 1}",
+        }
+        for i in range(limit)
+    ]
     return {"total": 500, "items": items}
 
 
@@ -78,7 +85,27 @@ def _mock_graphql(query: str, variables: dict[str, Any] | None) -> dict[str, Any
     if "getTrack(" in query:
         values = variables or {}
         track_id = int(values.get("trackId", 1))
-        return {"data": {"getTrack": {"id": track_id, "mbid": f"offline-track-{track_id}"}}}
+        return {
+            "data": {
+                "getTrack": {
+                    "id": track_id,
+                    "mbid": f"offline-track-{track_id}",
+                    "title": f"Offline Track {track_id}",
+                }
+            }
+        }
+    if "getAlbum(" in query:
+        values = variables or {}
+        album_id = int(values.get("albumId", 1))
+        return {"data": {"getAlbum": {"id": album_id, "title": f"Album {album_id}"}}}
+    if "getPerson(" in query:
+        values = variables or {}
+        person_id = int(values.get("personId", 1))
+        return {"data": {"getPerson": {"id": person_id, "fullName": f"Person {person_id}"}}}
+    if "getLabel(" in query:
+        values = variables or {}
+        label_id = int(values.get("labelId", 1))
+        return {"data": {"getLabel": {"id": label_id, "name": f"Label {label_id}"}}}
     if "playlists" in query:
         return {"data": {"playlists": [{"id": 1, "name": "Offline Playlist", "trackIds": [1, 2, 3]}]}}
     if "queue" in query:

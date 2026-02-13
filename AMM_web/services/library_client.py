@@ -1,7 +1,15 @@
 """GraphQL client wrapper for library data."""
 
 from AMM_web.graphql import gql
-from AMM_web.models.library import AlbumSummary, PlaylistSummary, QueueSummary, TrackSummary
+from AMM_web.models.library import (
+    AlbumSummary,
+    LabelSummary,
+    PersonSummary,
+    PlaylistSummary,
+    QueueSummary,
+    TaskDisplaySummary,
+    TrackSummary,
+)
 
 
 class LibraryService:
@@ -48,6 +56,40 @@ class LibraryService:
         total = payload.get("total", 0)
         return items, total
 
+    async def list_persons(self, limit: int = 25, offset: int = 0) -> tuple[list[PersonSummary], int]:
+        query = """
+        query GetPersons($limit: Int!, $offset: Int!) {
+          getPersons(limit: $limit, offset: $offset) {
+            total
+            items { id fullName }
+          }
+        }
+        """
+        data = await gql(query, variables={"limit": limit, "offset": offset})
+        if "errors" in data:
+            raise RuntimeError(self._graphql_error(data, "Failed to load persons"))
+        payload = ((data.get("data") or {}).get("getPersons") or {})
+        items = [PersonSummary(**item) for item in payload.get("items", [])]
+        total = payload.get("total", 0)
+        return items, total
+
+    async def list_labels(self, limit: int = 25, offset: int = 0) -> tuple[list[LabelSummary], int]:
+        query = """
+        query GetLabels($limit: Int!, $offset: Int!) {
+          getLabels(limit: $limit, offset: $offset) {
+            total
+            items { id name }
+          }
+        }
+        """
+        data = await gql(query, variables={"limit": limit, "offset": offset})
+        if "errors" in data:
+            raise RuntimeError(self._graphql_error(data, "Failed to load labels"))
+        payload = ((data.get("data") or {}).get("getLabels") or {})
+        items = [LabelSummary(**item) for item in payload.get("items", [])]
+        total = payload.get("total", 0)
+        return items, total
+
     async def list_playlists(self, access_token: str) -> list[PlaylistSummary]:
         if not access_token:
             raise RuntimeError("Authentication required")
@@ -79,7 +121,7 @@ class LibraryService:
     async def get_track(self, track_id: int, access_token: str | None = None) -> TrackSummary | None:
         query = """
         query GetTrack($trackId: Int!) {
-          getTrack(trackId: $trackId) { id mbid }
+          getTrack(trackId: $trackId) { id mbid title }
         }
         """
         data = await gql(query, variables={"trackId": track_id}, access_token=access_token)
@@ -89,6 +131,60 @@ class LibraryService:
         if not payload:
             return None
         return TrackSummary(**payload)
+
+    async def get_album(self, album_id: int, access_token: str | None = None) -> AlbumSummary | None:
+        query = """
+        query GetAlbum($albumId: Int!) {
+          getAlbum(albumId: $albumId) { id title }
+        }
+        """
+        data = await gql(query, variables={"albumId": album_id}, access_token=access_token)
+        if "errors" in data:
+            return None
+        payload = ((data.get("data") or {}).get("getAlbum"))
+        if not payload:
+            return None
+        return AlbumSummary(**payload)
+
+    async def get_person(self, person_id: int, access_token: str | None = None) -> PersonSummary | None:
+        query = """
+        query GetPerson($personId: Int!) {
+          getPerson(personId: $personId) { id fullName }
+        }
+        """
+        data = await gql(query, variables={"personId": person_id}, access_token=access_token)
+        if "errors" in data:
+            return None
+        payload = ((data.get("data") or {}).get("getPerson"))
+        if not payload:
+            return None
+        return PersonSummary(**payload)
+
+    async def get_label(self, label_id: int, access_token: str | None = None) -> LabelSummary | None:
+        query = """
+        query GetLabel($labelId: Int!) {
+          getLabel(labelId: $labelId) { id name }
+        }
+        """
+        data = await gql(query, variables={"labelId": label_id}, access_token=access_token)
+        if "errors" in data:
+            return None
+        payload = ((data.get("data") or {}).get("getLabel"))
+        if not payload:
+            return None
+        return LabelSummary(**payload)
+
+    async def list_task_display(self, access_token: str | None = None) -> list[TaskDisplaySummary]:
+        query = """
+        query TaskDisplay {
+          getTaskDisplay { taskId taskType progress startTime status }
+        }
+        """
+        data = await gql(query, access_token=access_token)
+        if "errors" in data:
+            raise RuntimeError(self._graphql_error(data, "Failed to load task display"))
+        items = ((data.get("data") or {}).get("getTaskDisplay") or [])
+        return [TaskDisplaySummary(**item) for item in items]
 
 
 library_service = LibraryService()
