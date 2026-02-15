@@ -13,7 +13,7 @@ def index() -> rx.Component:
     return rx.container(
         rx.color_mode.button(position="bottom-left"),
         player_shell(
-            rx.hstack(
+            rx.vstack(
                 navbar(),
                 rx.container(
                     rx.vstack(

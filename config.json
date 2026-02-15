@@ -43,7 +43,7 @@
         "google_client_secret": "",
         "admin_usernames": [],
         "allowed_usernames": [],
-        "frontend_url": "http://localhost:3000",
-        "backend_url": "http://localhost:8000"
+        "frontend_url": "http://amm.pegasus-ict.nl",
+        "backend_url": "http://amm.pegasus-ict.nl"
     }
 }
