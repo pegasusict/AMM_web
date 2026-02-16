@@ -15,7 +15,12 @@ def terms() -> rx.Component:
         player_shell(
             rx.vstack(
                 navbar(),
-                rx.container(
+                rx.container(                            rx.cond(
+                                AuthState.is_authenticated,
+                                rx.fragment(),
+                                rx.link("Login", href=routes.LOGIN_ROUTE),
+                            ),
+
                     rx.text("Terms and Conditions", font_size="2xl", font_weight="bold"),
                     rx.text(
                         "Welcome to our application. By using our application, you agree to comply with and be bound by the following terms and conditions."
@@ -87,7 +92,7 @@ def terms() -> rx.Component:
                     rx.text("17. Entire Agreement"),
                     rx.text(
                         "These terms constitute the entire agreement between you and us regarding your use of our application and supersede any prior agreements or understandings."
-                    ),
+                    ),  
                 ),
                 footer(),
             )
