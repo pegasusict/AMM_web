@@ -3,7 +3,7 @@
 import reflex as rx
 
 from ..auth_state import AuthState
-from ..components import footer, navbar, player_shell
+from ..components import auth_gate, footer, navbar, player_shell
 from ..state.search_state import SearchState
 
 _CARD_BORDER = "1px solid #E2E8F0"
@@ -178,6 +178,7 @@ def search() -> rx.Component:
         player_shell(
             rx.vstack(
                 navbar(),
+                auth_gate(),
                 rx.container(
                     rx.vstack(
                         rx.heading("Library Search", size="8"),

@@ -17,6 +17,15 @@ class Settings(BaseSettings):
     SITE_DESCRIPTION: str = "A modular Reflex-based Audiophiles' Music Manager interface."
     SENTRY_DSN: Optional[str] = None
 
+    CONTACT_TO_EMAIL: str = "pegasus.ict@gmail.com"
+    SMTP_HOST: str = "smtp.gmail.com"
+    SMTP_PORT: int = 587
+    SMTP_USERNAME: str = ""
+    SMTP_PASSWORD: str = ""
+    SMTP_FROM_EMAIL: str = ""
+    SMTP_USE_TLS: bool = True
+    SMTP_USE_SSL: bool = False
+
     model_config = SettingsConfigDict(env_file=".env", env_prefix="AMM_")
 
 
