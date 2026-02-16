@@ -66,35 +66,34 @@ def navbar() -> rx.Component:
                     ),
                     rx.hstack(
                         navbar_link("Home", routes.HOME_ROUTE),
-                        # rx.menu.root(
-                        #     rx.menu.trigger(
-                        #         rx.button(
-                        #             rx.text(
-                        #                 "Services",
-                        #                 size="4",
-                        #                 weight="medium",
-                        #             ),
-                        #             rx.icon("chevron-down"),
-                        #             weight="medium",
-                        #             variant="ghost",
-                        #             size="3",
-                        #         ),
-                        #     ),
-                        #     rx.menu.content(
-                        #         rx.menu.item("Service 1"),
-                        #         rx.menu.item("Service 2"),
-                        #         rx.menu.item("Service 3"),
-                        #     ),
-                        # ),
                         navbar_link("About", routes.ABOUT_ROUTE),
                         navbar_link("Contact", routes.CONTACT_ROUTE),
+                        rx.cond(
+                            AuthState.is_authenticated,
+                            rx.link("Dashboard", href=routes.DASHBOARD_ROUTE),
+                            rx.fragment(),
+                        ),
+                        rx.cond(
+                            AuthState.is_authenticated,
+                            rx.link("Search", href=routes.SEARCH_ROUTE),
+                            rx.fragment(),
+                        ),
+                        navbar_link("Privacy Policy", routes.PRIVACY_ROUTE),
+                        navbar_link("Terms of Service", routes.TERMS_ROUTE),
                         rx.cond(
                             AuthState.is_admin,
                             navbar_link("Admin", routes.ADMIN_USERS_ROUTE),
                             rx.fragment(),
                         ),
-                        navbar_link("Login", routes.LOGIN_ROUTE),
-                        navbar_link("Sign Up", routes.SIGNUP_ROUTE),
+                        rx.cond(
+                            AuthState.is_authenticated,
+                            rx.fragment(),
+                            navbar_link("Login", routes.LOGIN_ROUTE),
+                        ),
+                        rx.cond(                            AuthState.is_authenticated,
+                            rx.fragment(),
+                            navbar_link("Sign Up", routes.SIGNUP_ROUTE),
+                        ),
                         justify="end",
                         spacing="5",
                     ),
@@ -113,20 +112,43 @@ def navbar() -> rx.Component:
                         rx.menu.trigger(rx.icon("menu", size=30)),
                         rx.menu.content(
                             rx.menu.item("Home"),
-                            # rx.menu.sub(
-                            #     rx.menu.sub_trigger("Services"),
-                            #     rx.menu.sub_content(
-                            #         rx.menu.item("Service 1"),
-                            #         rx.menu.item("Service 2"),
-                            #         rx.menu.item("Service 3"),
-                            #     ),
-                            # ),
                             rx.menu.item("About"),
                             rx.menu.item("Contact"),
+                            rx.cond(
+                                AuthState.is_authenticated,
+                                rx.link("Dashboard", href=routes.DASHBOARD_ROUTE),
+                            rx.fragment(),
+                            ),
+                        
+                            rx.cond(
+                                AuthState.is_authenticated,
+                                rx.link("Search", href=routes.SEARCH_ROUTE),
+                                rx.fragment(),
+                            ),
+                            rx.menu.item(
+                                "Privacy Policy",
+                                href=routes.PRIVACY_ROUTE,
+                                as_="a",
+                            ),
+                            rx.menu.item(
+                                "Terms of Service",
+                                href=routes.TERMS_ROUTE,
+                                as_="a",
+                            ),
                             rx.cond(
                                 AuthState.is_admin,
                                 rx.link("Admin", href=routes.ADMIN_USERS_ROUTE),
                                 rx.fragment(),
+                            ),
+                            rx.cond(
+                                AuthState.is_authenticated,
+                                rx.fragment(),
+                                rx.link("Login", href=routes.LOGIN_ROUTE),
+                            ),
+                            rx.cond(
+                                AuthState.is_authenticated,
+                                rx.fragment(),
+                                rx.link("Signup", href=routes.SIGNUP_ROUTE),
                             ),
                         ),
                         justify="end",
