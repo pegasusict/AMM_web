@@ -36,6 +36,7 @@ def album_detail(album_id: str):
                     field("Lyricist IDs", AlbumState.album.lyricist_ids, "[]"),
                     field("Producer IDs", AlbumState.album.producer_ids, "[]"),
                 ],
+                edit_href=rx.concat("/albums/", album_id, "/edit"),
             ),
         ),
     )

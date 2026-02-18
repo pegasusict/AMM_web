@@ -28,6 +28,7 @@ def label_detail(label_id: str):
                     field("Child IDs", LabelState.label.child_ids, "[]"),
                     field("Album IDs", LabelState.label.album_ids, "[]"),
                 ],
+                edit_href=rx.concat("/labels/", label_id, "/edit"),
             ),
         ),
     )

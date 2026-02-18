@@ -257,6 +257,20 @@ def _mock_graphql(query: str, variables: dict[str, Any] | None) -> dict[str, Any
     if "deleteUser(" in query:
         user_id = int((variables or {}).get("userId", 1))
         return {"data": {"deleteUser": {"id": user_id}}}
+    if "updateTrack(" in query:
+        return {"data": {"updateTrack": True}}
+    if "updateAlbum(" in query:
+        return {"data": {"updateAlbum": True}}
+    if "updatePerson(" in query:
+        return {"data": {"updatePerson": True}}
+    if "updateLabel(" in query:
+        values = variables or {}
+        label_id = int(values.get("labelId", 1))
+        payload = (values.get("data") or {}).copy()
+        payload["id"] = label_id
+        return {"data": {"updateLabel": payload}}
+    if "updateFile(" in query:
+        return {"data": {"updateFile": True}}
     if "getTaskDisplay" in query:
         return {
             "data": {

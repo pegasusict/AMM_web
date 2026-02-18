@@ -41,6 +41,7 @@ def person_detail(person_id: str):
                     field("Task IDs", PersonState.person.task_ids, "[]"),
                     field("Label IDs", PersonState.person.label_ids, "[]"),
                 ],
+                edit_href=rx.concat("/persons/", person_id, "/edit"),
             ),
         ),
     )

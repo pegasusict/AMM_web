@@ -16,6 +16,11 @@ from .album_detail import album_detail
 from .person_detail import person_detail
 from .file_detail import file_detail
 from .label_detail import label_detail
+from .track_edit import track_edit
+from .album_edit import album_edit
+from .person_edit import person_edit
+from .file_edit import file_edit
+from .label_edit import label_edit
 
 __all__ = [
     "index",
@@ -34,4 +39,9 @@ __all__ = [
     "person_detail",
     "file_detail",
     "label_detail",
+    "track_edit",
+    "album_edit",
+    "person_edit",
+    "file_edit",
+    "label_edit",
 ]

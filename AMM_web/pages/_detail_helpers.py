@@ -23,7 +23,12 @@ def fields_block(fields: list[FieldDef]) -> rx.Component:
     )
 
 
-def detail_content(entity_label: str, entity: rx.Var, fields: list[FieldDef]) -> rx.Component:
+def detail_content(
+    entity_label: str,
+    entity: rx.Var,
+    fields: list[FieldDef],
+    edit_href: rx.Var | str | None = None,
+) -> rx.Component:
     return rx.vstack(
         breadcrumbs(
             ("Search", "/search"),
@@ -34,10 +39,22 @@ def detail_content(entity_label: str, entity: rx.Var, fields: list[FieldDef]) ->
             fields_block(fields),
             rx.text("Loading...", color="gray"),
         ),
-        rx.button(
-            "Back",
-            on_click=rx.redirect("/search"),
-            variant="outline",
+        rx.hstack(
+            rx.button(
+                "Back",
+                on_click=rx.redirect("/search"),
+                variant="outline",
+            ),
+            *(
+                [
+                    rx.button(
+                        "Edit",
+                        on_click=rx.redirect(edit_href),
+                    )
+                ]
+                if edit_href is not None
+                else []
+            ),
         ),
         spacing="4",
     )

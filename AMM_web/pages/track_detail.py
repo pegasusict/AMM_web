@@ -33,6 +33,7 @@ def track_detail(track_id: str):
                     field("Task IDs", TrackState.track.task_ids, "[]"),
                     field("Track Tag IDs", TrackState.track.tracktag_ids, "[]"),
                 ],
+                edit_href=rx.concat("/tracks/", track_id, "/edit"),
             ),
         ),
     )

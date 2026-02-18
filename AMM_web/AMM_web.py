@@ -18,6 +18,11 @@ from AMM_web.pages import (
     person_detail,
     file_detail,
     label_detail,
+    track_edit,
+    album_edit,
+    person_edit,
+    file_edit,
+    label_edit,
     admin_system,
     admin_users
 )
@@ -40,6 +45,11 @@ from AMM_web.routes import (
     PERSON_DETAIL_ROUTE,
     FILE_DETAIL_ROUTE,
     LABEL_DETAIL_ROUTE,
+    TRACK_EDIT_ROUTE,
+    ALBUM_EDIT_ROUTE,
+    PERSON_EDIT_ROUTE,
+    FILE_EDIT_ROUTE,
+    LABEL_EDIT_ROUTE,
 )
 
 app = rx.App()
@@ -74,3 +84,8 @@ app.add_page(album_detail, ALBUM_DETAIL_ROUTE, on_load=ServerState.check_server)
 app.add_page(person_detail, PERSON_DETAIL_ROUTE, on_load=ServerState.check_server)
 app.add_page(file_detail, FILE_DETAIL_ROUTE, on_load=ServerState.check_server)
 app.add_page(label_detail, LABEL_DETAIL_ROUTE, on_load=ServerState.check_server)
+app.add_page(track_edit, TRACK_EDIT_ROUTE, on_load=ServerState.check_server)
+app.add_page(album_edit, ALBUM_EDIT_ROUTE, on_load=ServerState.check_server)
+app.add_page(person_edit, PERSON_EDIT_ROUTE, on_load=ServerState.check_server)
+app.add_page(file_edit, FILE_EDIT_ROUTE, on_load=ServerState.check_server)
+app.add_page(label_edit, LABEL_EDIT_ROUTE, on_load=ServerState.check_server)

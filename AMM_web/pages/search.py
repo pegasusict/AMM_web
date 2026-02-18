@@ -483,7 +483,7 @@ def search() -> rx.Component:
                             rx.heading("Library Search", size="8"),
                             rx.text(
                                 "Browse library entities with structured search forms. "
-                                "Detail and edit views are displayed as read-only forms."
+                                "Open detail pages to inspect values and use Edit to update fields."
                             ),
                             rx.cond(SearchState.error, rx.text(SearchState.error, color="red")),
                             _track_panel(),

@@ -282,6 +282,145 @@ class LibraryService:
             return None
         return FileSummary(**payload)
 
+    async def update_track(
+        self,
+        track_id: int,
+        data: dict,
+        access_token: str | None = None,
+    ) -> TrackSummary:
+        mutation = """
+        mutation UpdateTrack($trackId: Int!, $data: TrackInput!) {
+          updateTrack(trackId: $trackId, data: $data)
+        }
+        """
+        resp = await gql(
+            mutation,
+            variables={"trackId": track_id, "data": data},
+            access_token=access_token,
+        )
+        if "errors" in resp:
+            raise RuntimeError(self._graphql_error(resp, "Failed to update track"))
+        updated = ((resp.get("data") or {}).get("updateTrack"))
+        if not updated:
+            raise RuntimeError("Track update failed")
+        refreshed = await self.get_track(track_id, access_token=access_token)
+        if not refreshed:
+            raise RuntimeError("Track updated but could not reload track")
+        return refreshed
+
+    async def update_album(
+        self,
+        album_id: int,
+        data: dict,
+        access_token: str | None = None,
+    ) -> AlbumSummary:
+        mutation = """
+        mutation UpdateAlbum($albumId: Int!, $data: AlbumInput!) {
+          updateAlbum(albumId: $albumId, data: $data)
+        }
+        """
+        resp = await gql(
+            mutation,
+            variables={"albumId": album_id, "data": data},
+            access_token=access_token,
+        )
+        if "errors" in resp:
+            raise RuntimeError(self._graphql_error(resp, "Failed to update album"))
+        updated = ((resp.get("data") or {}).get("updateAlbum"))
+        if not updated:
+            raise RuntimeError("Album update failed")
+        refreshed = await self.get_album(album_id, access_token=access_token)
+        if not refreshed:
+            raise RuntimeError("Album updated but could not reload album")
+        return refreshed
+
+    async def update_person(
+        self,
+        person_id: int,
+        data: dict,
+        access_token: str | None = None,
+    ) -> PersonSummary:
+        mutation = """
+        mutation UpdatePerson($personId: Int!, $data: PersonInput!) {
+          updatePerson(personId: $personId, data: $data)
+        }
+        """
+        resp = await gql(
+            mutation,
+            variables={"personId": person_id, "data": data},
+            access_token=access_token,
+        )
+        if "errors" in resp:
+            raise RuntimeError(self._graphql_error(resp, "Failed to update person"))
+        updated = ((resp.get("data") or {}).get("updatePerson"))
+        if not updated:
+            raise RuntimeError("Person update failed")
+        refreshed = await self.get_person(person_id, access_token=access_token)
+        if not refreshed:
+            raise RuntimeError("Person updated but could not reload person")
+        return refreshed
+
+    async def update_label(
+        self,
+        label_id: int,
+        data: dict,
+        access_token: str | None = None,
+    ) -> LabelSummary:
+        mutation = """
+        mutation UpdateLabel($labelId: Int!, $data: LabelInput!) {
+          updateLabel(labelId: $labelId, data: $data) {
+            id
+            name
+            mbid
+            founded
+            defunct
+            description
+            ownerId
+            parentId
+            childIds
+            pictureId
+            albumIds
+          }
+        }
+        """
+        resp = await gql(
+            mutation,
+            variables={"labelId": label_id, "data": data},
+            access_token=access_token,
+        )
+        if "errors" in resp:
+            raise RuntimeError(self._graphql_error(resp, "Failed to update label"))
+        payload = ((resp.get("data") or {}).get("updateLabel"))
+        if not payload:
+            raise RuntimeError("Label update returned no payload")
+        return LabelSummary(**payload)
+
+    async def update_file(
+        self,
+        file_id: int,
+        data: dict,
+        access_token: str | None = None,
+    ) -> FileSummary:
+        mutation = """
+        mutation UpdateFile($fileId: Int!, $data: FileInput!) {
+          updateFile(fileId: $fileId, data: $data)
+        }
+        """
+        resp = await gql(
+            mutation,
+            variables={"fileId": file_id, "data": data},
+            access_token=access_token,
+        )
+        if "errors" in resp:
+            raise RuntimeError(self._graphql_error(resp, "Failed to update file"))
+        updated = ((resp.get("data") or {}).get("updateFile"))
+        if not updated:
+            raise RuntimeError("File update failed")
+        refreshed = await self.get_file(file_id, access_token=access_token)
+        if not refreshed:
+            raise RuntimeError("File updated but could not reload file")
+        return refreshed
+
     async def list_task_display(self, access_token: str | None = None) -> list[TaskDisplaySummary]:
         query = """
         query TaskDisplay {

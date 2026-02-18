@@ -35,6 +35,7 @@ def file_detail(file_id: str):
                     field("Stage Type", FileState.file.stage_type),
                     field("Completed Tasks", FileState.file.completed_tasks, "[]"),
                 ],
+                edit_href=rx.concat("/files/", file_id, "/edit"),
             ),
         ),
     )
