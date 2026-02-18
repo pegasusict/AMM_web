@@ -1,0 +1,25 @@
+[Unit]
+Description=AMM Web (Reflex)
+After=network.target amm-core.service
+Wants=amm-core.service
+
+[Service]
+Type=simple
+User=pegasus
+Group=pegasus
+WorkingDirectory=/home/pegasus/AMM_web_prod
+
+# Ensure reflex can spawn granian in prod single-port mode.
+Environment=PATH=/home/pegasus/AMM_web_prod/.venv/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+Environment=REFLEX_DIR=/home/pegasus/AMM_web_prod/.reflex
+Environment=REFLEX_USE_NPM=1
+
+ExecStart=/home/pegasus/AMM_web_prod/.venv/bin/reflex run --env prod --single-port --frontend-port 3000 --backend-host 127.0.0.1
+
+Restart=on-failure
+RestartSec=2
+NoNewPrivileges=true
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target
