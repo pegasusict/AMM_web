@@ -2,6 +2,8 @@
 
 import reflex as rx
 
+from .. import routes
+from ..auth_state import AuthState
 from ..components import footer, navbar, player_shell
 
 

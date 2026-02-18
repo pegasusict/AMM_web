@@ -6,10 +6,9 @@ from ..components import detail_shell
 from ._detail_helpers import detail_content, field
 
 
-def album_detail(album_id: str):
+def album_detail(album_id: str = ""):
 
     return rx.container(
-        rx.on_mount(AlbumState.load(album_id, AuthState.access_token)),
         detail_shell(
             "Album Detail",
             detail_content(
@@ -36,7 +35,7 @@ def album_detail(album_id: str):
                     field("Lyricist IDs", AlbumState.album.lyricist_ids, "[]"),
                     field("Producer IDs", AlbumState.album.producer_ids, "[]"),
                 ],
-                edit_href=rx.concat("/albums/", album_id, "/edit"),
+                edit_href="/albums/" + album_id + "/edit",
             ),
         ),
     )

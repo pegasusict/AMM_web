@@ -6,13 +6,12 @@ from ..states import AlbumState
 from ._edit_helpers import edit_field, edit_header, edit_messages, id_field
 
 
-def album_edit(album_id: str):
+def album_edit(album_id: str = ""):
     return rx.container(
-        rx.on_mount(AlbumState.load(album_id, AuthState.access_token)),
         detail_shell(
             "Edit Album",
             rx.vstack(
-                edit_header("Album", rx.concat("/albums/", album_id)),
+                edit_header("Album", "/albums/" + album_id),
                 rx.cond(
                     AlbumState.album,
                     rx.vstack(
@@ -26,7 +25,7 @@ def album_edit(album_id: str):
                         edit_field("Disc Count", AlbumState.disc_count, AlbumState.set_disc_count),
                         edit_field("Track Count", AlbumState.track_count, AlbumState.set_track_count),
                         edit_field("Task ID", AlbumState.task_id, AlbumState.set_task_id),
-                        edit_field("Label ID", AlbumState.label_id, AlbumState.set_label_id),
+                        edit_field("Label ID", AlbumState.album_label_id, AlbumState.set_album_label_id),
                         edit_field("Picture ID", AlbumState.picture_id, AlbumState.set_picture_id),
                         edit_field(
                             "Album Track IDs",
@@ -70,7 +69,7 @@ def album_edit(album_id: str):
                             rx.button(
                                 "Cancel",
                                 variant="outline",
-                                on_click=rx.redirect(rx.concat("/albums/", album_id)),
+                                on_click=rx.redirect("/albums/" + album_id),
                             ),
                         ),
                         spacing="2",

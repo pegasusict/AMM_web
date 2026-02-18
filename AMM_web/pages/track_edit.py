@@ -6,13 +6,12 @@ from ..states import TrackState
 from ._edit_helpers import edit_field, edit_header, edit_messages, id_field
 
 
-def track_edit(track_id: str):
+def track_edit(track_id: str = ""):
     return rx.container(
-        rx.on_mount(TrackState.load(track_id, AuthState.access_token)),
         detail_shell(
             "Edit Track",
             rx.vstack(
-                edit_header("Track", rx.concat("/tracks/", track_id)),
+                edit_header("Track", "/tracks/" + track_id),
                 rx.cond(
                     TrackState.track,
                     rx.vstack(
@@ -82,7 +81,7 @@ def track_edit(track_id: str):
                             rx.button(
                                 "Cancel",
                                 variant="outline",
-                                on_click=rx.redirect(rx.concat("/tracks/", track_id)),
+                                on_click=rx.redirect("/tracks/" + track_id),
                             ),
                         ),
                         spacing="2",

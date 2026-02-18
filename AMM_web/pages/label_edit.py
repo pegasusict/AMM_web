@@ -6,13 +6,12 @@ from ..states import LabelState
 from ._edit_helpers import edit_field, edit_header, edit_messages, edit_textarea, id_field
 
 
-def label_edit(label_id: str):
+def label_edit(label_id: str = ""):
     return rx.container(
-        rx.on_mount(LabelState.load(label_id, AuthState.access_token)),
         detail_shell(
             "Edit Label",
             rx.vstack(
-                edit_header("Label", rx.concat("/labels/", label_id)),
+                edit_header("Label", "/labels/" + label_id),
                 rx.cond(
                     LabelState.label,
                     rx.vstack(
@@ -37,7 +36,7 @@ def label_edit(label_id: str):
                             rx.button(
                                 "Cancel",
                                 variant="outline",
-                                on_click=rx.redirect(rx.concat("/labels/", label_id)),
+                                on_click=rx.redirect("/labels/" + label_id),
                             ),
                         ),
                         spacing="2",

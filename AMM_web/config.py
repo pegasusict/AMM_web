@@ -26,7 +26,7 @@ class Settings(BaseSettings):
     SMTP_USE_TLS: bool = True
     SMTP_USE_SSL: bool = False
 
-    model_config = SettingsConfigDict(env_file=".env", env_prefix="AMM_")
+    model_config = SettingsConfigDict(env_file=".env", env_prefix="AMM_", extra="ignore")
 
 
 settings = Settings()

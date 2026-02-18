@@ -1,10 +1,11 @@
 from AMM_web.state.base_state import BaseState
 from AMM_web.state.edit_helpers import none_if_blank, parse_int_optional
+from AMM_web.models.library import AlbumSummary
 from AMM_web.services.library_client import library_service
 
 
 class AlbumState(BaseState):
-    album = None
+    album: AlbumSummary | None = None
     loading = False
     success_message: str | None = None
 
@@ -17,7 +18,7 @@ class AlbumState(BaseState):
     disc_count: str = ""
     track_count: str = ""
     task_id: str = ""
-    label_id: str = ""
+    album_label_id: str = ""
     picture_id: str = ""
     album_track_ids: str = ""
     genre_ids: str = ""
@@ -43,7 +44,7 @@ class AlbumState(BaseState):
         self.disc_count = "" if self.album.disc_count is None else str(self.album.disc_count)
         self.track_count = "" if self.album.track_count is None else str(self.album.track_count)
         self.task_id = "" if self.album.task_id is None else str(self.album.task_id)
-        self.label_id = "" if self.album.label_id is None else str(self.album.label_id)
+        self.album_label_id = "" if self.album.label_id is None else str(self.album.label_id)
         self.picture_id = "" if self.album.picture_id is None else str(self.album.picture_id)
         self.album_track_ids = ", ".join(str(v) for v in (self.album.album_track_ids or []))
         self.genre_ids = ", ".join(str(v) for v in (self.album.genre_ids or []))
@@ -59,6 +60,12 @@ class AlbumState(BaseState):
         self.album = await library_service.get_album(int(album_id), token)
         self._populate_form()
         self.loading = False
+
+    async def load_from_route(self, token: str = ""):
+        route_id = str(self.router.page.params.get("album_id", "")).strip()
+        if not route_id:
+            return
+        await self.load(route_id, token)
 
     async def save(self, token: str):
         if not self.album or self.album.id is None:

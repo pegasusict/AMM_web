@@ -6,10 +6,9 @@ from ..components import detail_shell
 from ._detail_helpers import detail_content, field
 
 
-def person_detail(person_id: str):
+def person_detail(person_id: str = ""):
 
     return rx.container(
-        rx.on_mount(PersonState.load(person_id, AuthState.access_token)),
         detail_shell(
             "Person Detail",
             detail_content(
@@ -41,7 +40,7 @@ def person_detail(person_id: str):
                     field("Task IDs", PersonState.person.task_ids, "[]"),
                     field("Label IDs", PersonState.person.label_ids, "[]"),
                 ],
-                edit_href=rx.concat("/persons/", person_id, "/edit"),
+                edit_href="/persons/" + person_id + "/edit",
             ),
         ),
     )

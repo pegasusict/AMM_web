@@ -6,13 +6,12 @@ from ..states import PersonState
 from ._edit_helpers import edit_field, edit_header, edit_messages, id_field
 
 
-def person_edit(person_id: str):
+def person_edit(person_id: str = ""):
     return rx.container(
-        rx.on_mount(PersonState.load(person_id, AuthState.access_token)),
         detail_shell(
             "Edit Person",
             rx.vstack(
-                edit_header("Person", rx.concat("/persons/", person_id)),
+                edit_header("Person", "/persons/" + person_id),
                 rx.cond(
                     PersonState.person,
                     rx.vstack(
@@ -110,7 +109,7 @@ def person_edit(person_id: str):
                             rx.button(
                                 "Cancel",
                                 variant="outline",
-                                on_click=rx.redirect(rx.concat("/persons/", person_id)),
+                                on_click=rx.redirect("/persons/" + person_id),
                             ),
                         ),
                         spacing="2",

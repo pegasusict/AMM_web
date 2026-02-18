@@ -28,7 +28,7 @@ class SearchState(BaseState):
     tracks_offset: str = "0"
     tracks: list[TrackSummary] = []
     tracks_total: int = 0
-    track_id: str = ""
+    search_track_id: str = ""
     selected_track: TrackSummary | None = None
 
     # Albums
@@ -36,7 +36,7 @@ class SearchState(BaseState):
     albums_offset: str = "0"
     albums: list[AlbumSummary] = []
     albums_total: int = 0
-    album_id: str = ""
+    search_album_id: str = ""
     selected_album: AlbumSummary | None = None
 
     # Persons
@@ -44,7 +44,7 @@ class SearchState(BaseState):
     persons_offset: str = "0"
     persons: list[PersonSummary] = []
     persons_total: int = 0
-    person_id: str = ""
+    search_person_id: str = ""
     selected_person: PersonSummary | None = None
 
     # Labels
@@ -52,7 +52,7 @@ class SearchState(BaseState):
     labels_offset: str = "0"
     labels: list[LabelSummary] = []
     labels_total: int = 0
-    label_id: str = ""
+    search_label_id: str = ""
     selected_label: LabelSummary | None = None
 
     # Auth / misc
@@ -79,7 +79,7 @@ class SearchState(BaseState):
         self.set_loading(True)
         self._reset_error()
         try:
-            track_id = _to_int(self.track_id, 0)
+            track_id = _to_int(self.search_track_id, 0)
             if track_id <= 0:
                 self.set_error("Enter a Track ID (positive integer).")
                 self.selected_track = None
@@ -93,7 +93,7 @@ class SearchState(BaseState):
             self.set_loading(False)
 
     def select_track(self, track_id: int) -> None:
-        self.track_id = str(track_id)
+        self.search_track_id = str(track_id)
 
     async def load_albums(self) -> None:
         self.set_loading(True)
@@ -111,7 +111,7 @@ class SearchState(BaseState):
         self.set_loading(True)
         self._reset_error()
         try:
-            album_id = _to_int(self.album_id, 0)
+            album_id = _to_int(self.search_album_id, 0)
             if album_id <= 0:
                 self.set_error("Enter an Album ID (positive integer).")
                 self.selected_album = None
@@ -125,7 +125,7 @@ class SearchState(BaseState):
             self.set_loading(False)
 
     def select_album(self, album_id: int) -> None:
-        self.album_id = str(album_id)
+        self.search_album_id = str(album_id)
 
     async def load_persons(self) -> None:
         self.set_loading(True)
@@ -143,7 +143,7 @@ class SearchState(BaseState):
         self.set_loading(True)
         self._reset_error()
         try:
-            person_id = _to_int(self.person_id, 0)
+            person_id = _to_int(self.search_person_id, 0)
             if person_id <= 0:
                 self.set_error("Enter a Person ID (positive integer).")
                 self.selected_person = None
@@ -157,7 +157,7 @@ class SearchState(BaseState):
             self.set_loading(False)
 
     def select_person(self, person_id: int) -> None:
-        self.person_id = str(person_id)
+        self.search_person_id = str(person_id)
 
     async def load_labels(self) -> None:
         self.set_loading(True)
@@ -175,7 +175,7 @@ class SearchState(BaseState):
         self.set_loading(True)
         self._reset_error()
         try:
-            label_id = _to_int(self.label_id, 0)
+            label_id = _to_int(self.search_label_id, 0)
             if label_id <= 0:
                 self.set_error("Enter a Label ID (positive integer).")
                 self.selected_label = None
@@ -189,7 +189,7 @@ class SearchState(BaseState):
             self.set_loading(False)
 
     def select_label(self, label_id: int) -> None:
-        self.label_id = str(label_id)
+        self.search_label_id = str(label_id)
 
     async def load_playlists(self, access_token: str = "") -> None:
         self.set_loading(True)
@@ -224,4 +224,3 @@ class SearchState(BaseState):
             self.task_display = []
         finally:
             self.set_loading(False)
-

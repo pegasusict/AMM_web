@@ -1,10 +1,11 @@
 from AMM_web.state.base_state import BaseState
 from AMM_web.state.edit_helpers import none_if_blank
+from AMM_web.models.library import TrackSummary
 from AMM_web.services.library_client import library_service
 
 
 class TrackState(BaseState):
-    track = None
+    track: TrackSummary | None = None
     loading = False
     success_message: str | None = None
 
@@ -53,6 +54,12 @@ class TrackState(BaseState):
         self.track = await library_service.get_track(int(track_id), token)
         self._populate_form()
         self.loading = False
+
+    async def load_from_route(self, token: str = ""):
+        route_id = str(self.router.page.params.get("track_id", "")).strip()
+        if not route_id:
+            return
+        await self.load(route_id, token)
 
     async def save(self, token: str):
         if not self.track or self.track.id is None:

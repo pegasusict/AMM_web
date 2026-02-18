@@ -1,10 +1,11 @@
 from AMM_web.state.base_state import BaseState
 from AMM_web.state.edit_helpers import none_if_blank
+from AMM_web.models.library import PersonSummary
 from AMM_web.services.library_client import library_service
 
 
 class PersonState(BaseState):
-    person = None
+    person: PersonSummary | None = None
     loading = False
     success_message: str | None = None
 
@@ -69,6 +70,12 @@ class PersonState(BaseState):
         self.person = await library_service.get_person(int(person_id), token)
         self._populate_form()
         self.loading = False
+
+    async def load_from_route(self, token: str = ""):
+        route_id = str(self.router.page.params.get("person_id", "")).strip()
+        if not route_id:
+            return
+        await self.load(route_id, token)
 
     async def save(self, token: str):
         if not self.person or self.person.id is None:

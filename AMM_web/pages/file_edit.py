@@ -6,13 +6,12 @@ from ..states import FileState
 from ._edit_helpers import edit_field, edit_header, edit_messages, id_field
 
 
-def file_edit(file_id: str):
+def file_edit(file_id: str = ""):
     return rx.container(
-        rx.on_mount(FileState.load(file_id, AuthState.access_token)),
         detail_shell(
             "Edit File",
             rx.vstack(
-                edit_header("File", rx.concat("/files/", file_id)),
+                edit_header("File", "/files/" + file_id),
                 rx.cond(
                     FileState.file,
                     rx.vstack(
@@ -30,7 +29,7 @@ def file_edit(file_id: str):
                         edit_field("Audio IP", FileState.audio_ip, FileState.set_audio_ip),
                         edit_field("Imported", FileState.imported, FileState.set_imported),
                         edit_field("Processed", FileState.processed, FileState.set_processed),
-                        edit_field("Track ID", FileState.track_id, FileState.set_track_id),
+                        edit_field("Track ID", FileState.file_track_id, FileState.set_file_track_id),
                         edit_field("Task ID", FileState.task_id, FileState.set_task_id),
                         edit_field("Stage Type", FileState.stage_type, FileState.set_stage_type),
                         edit_field(
@@ -49,7 +48,7 @@ def file_edit(file_id: str):
                             rx.button(
                                 "Cancel",
                                 variant="outline",
-                                on_click=rx.redirect(rx.concat("/files/", file_id)),
+                                on_click=rx.redirect("/files/" + file_id),
                             ),
                         ),
                         spacing="2",

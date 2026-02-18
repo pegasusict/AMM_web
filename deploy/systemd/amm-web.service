@@ -2,6 +2,8 @@
 Description=AMM Web (Reflex)
 After=network.target amm-core.service
 Wants=amm-core.service
+StartLimitIntervalSec=60
+StartLimitBurst=3
 
 [Service]
 Type=simple
@@ -13,10 +15,12 @@ WorkingDirectory=/home/pegasus/AMM_web_prod
 Environment=PATH=/home/pegasus/AMM_web_prod/.venv/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
 Environment=REFLEX_DIR=/home/pegasus/AMM_web_prod/.reflex
 Environment=REFLEX_USE_NPM=1
+Environment=AMM_REQUIRED_NODE_VERSION=20.19.0
 
-ExecStart=/home/pegasus/AMM_web_prod/.venv/bin/reflex run --env prod --single-port --frontend-port 3000 --backend-host 127.0.0.1
+ExecStart=/home/pegasus/AMM_web_prod/scripts/run_single_port.sh
 
 Restart=on-failure
+RestartPreventExitStatus=78
 RestartSec=2
 NoNewPrivileges=true
 PrivateTmp=true

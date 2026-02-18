@@ -381,7 +381,7 @@ def entity_row(
                 size="2",
                 variant="outline",
                 on_click=rx.redirect(
-                    rx.concat("/", route_prefix, "/", entity_id)
+                    "/" + route_prefix + "/" + entity_id.to_string()
                 ),
                 is_disabled=rx.cond(entity_id, False, True),
             ),
@@ -416,5 +416,10 @@ def detail_shell(title: str, body: rx.Component):
             footer(),
             spacing="4",
         ),
-        rx.redirect("/login"),
+        rx.vstack(
+            navbar(),
+            rx.text("Please log in to view this page."),
+            footer(),
+            spacing="4",
+        ),
     )

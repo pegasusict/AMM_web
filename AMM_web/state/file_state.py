@@ -1,10 +1,11 @@
 from AMM_web.state.base_state import BaseState
 from AMM_web.state.edit_helpers import none_if_blank, parse_int_optional
+from AMM_web.models.library import FileSummary
 from AMM_web.services.library_client import library_service
 
 
 class FileState(BaseState):
-    file = None
+    file: FileSummary | None = None
     loading = False
     success_message: str | None = None
 
@@ -21,7 +22,7 @@ class FileState(BaseState):
     audio_ip: str = ""
     imported: str = ""
     processed: str = ""
-    track_id: str = ""
+    file_track_id: str = ""
     task_id: str = ""
     stage_type: str = ""
     completed_tasks: str = ""
@@ -46,7 +47,7 @@ class FileState(BaseState):
         self.audio_ip = self.file.audio_ip or ""
         self.imported = self.file.imported or ""
         self.processed = self.file.processed or ""
-        self.track_id = "" if self.file.track_id is None else str(self.file.track_id)
+        self.file_track_id = "" if self.file.track_id is None else str(self.file.track_id)
         self.task_id = "" if self.file.task_id is None else str(self.file.task_id)
         self.stage_type = "" if self.file.stage_type is None else str(self.file.stage_type)
         self.completed_tasks = ", ".join(v for v in (self.file.completed_tasks or []))
@@ -57,6 +58,12 @@ class FileState(BaseState):
         self.file = await library_service.get_file(int(file_id), token)
         self._populate_form()
         self.loading = False
+
+    async def load_from_route(self, token: str = ""):
+        route_id = str(self.router.page.params.get("file_id", "")).strip()
+        if not route_id:
+            return
+        await self.load(route_id, token)
 
     async def save(self, token: str):
         if not self.file or self.file.id is None:
@@ -79,7 +86,7 @@ class FileState(BaseState):
                 "audioIp": none_if_blank(self.audio_ip),
                 "imported": none_if_blank(self.imported),
                 "processed": none_if_blank(self.processed),
-                "trackId": parse_int_optional(self.track_id, "Track ID"),
+                "trackId": parse_int_optional(self.file_track_id, "Track ID"),
                 "taskId": parse_int_optional(self.task_id, "Task ID"),
                 "stageType": parse_int_optional(self.stage_type, "Stage Type"),
                 "completedTasks": [v.strip() for v in self.completed_tasks.split(",") if v.strip()],

@@ -8,46 +8,64 @@ from ..state.admin_users_state import AdminUsersState
 
 
 def _user_row(user) -> rx.Component:
-    current_role = (user.role or "USER").upper()
-    target_role = "ADMIN" if current_role != "ADMIN" else "USER"
-    role_button_label = "Make Admin" if target_role == "ADMIN" else "Make User"
-    is_active = bool(user.is_active)
-
     return rx.box(
         rx.vstack(
             rx.hstack(
-                rx.text(f"#{user.id}", weight="medium"),
-                rx.text(user.username or "(no username)", weight="bold"),
-                rx.badge(current_role),
-                rx.badge("Active" if is_active else "Inactive", color_scheme="green" if is_active else "gray"),
+                rx.text("#", user.id.to_string(), weight="medium"),
+                rx.text(rx.cond(user.username, user.username, "(no username)"), weight="bold"),
+                rx.badge(rx.cond(user.role, user.role, "USER")),
+                rx.badge(
+                    rx.cond(user.is_active, "Active", "Inactive"),
+                    color_scheme=rx.cond(user.is_active, "green", "gray"),
+                ),
                 spacing="3",
                 align_items="center",
             ),
-            rx.text(user.email or "", color="gray"),
+            rx.text(rx.cond(user.email, user.email, ""), color="gray"),
             rx.hstack(
                 rx.button(
-                    role_button_label,
+                    "Make Admin",
                     size="2",
                     variant="outline",
                     on_click=AdminUsersState.set_user_role(
-                        user.id or 0,
-                        target_role,
+                        user.id,
+                        "ADMIN",
                         AuthState.access_token,
                         AuthState.is_admin,
                     ),
-                    is_disabled=(user.id is None),
                 ),
                 rx.button(
-                    "Deactivate" if is_active else "Activate",
+                    "Make User",
+                    size="2",
+                    variant="outline",
+                    on_click=AdminUsersState.set_user_role(
+                        user.id,
+                        "USER",
+                        AuthState.access_token,
+                        AuthState.is_admin,
+                    ),
+                ),
+                rx.button(
+                    "Activate",
                     size="2",
                     variant="outline",
                     on_click=AdminUsersState.set_user_active(
-                        user.id or 0,
-                        not is_active,
+                        user.id,
+                        True,
                         AuthState.access_token,
                         AuthState.is_admin,
                     ),
-                    is_disabled=(user.id is None),
+                ),
+                rx.button(
+                    "Deactivate",
+                    size="2",
+                    variant="outline",
+                    on_click=AdminUsersState.set_user_active(
+                        user.id,
+                        False,
+                        AuthState.access_token,
+                        AuthState.is_admin,
+                    ),
                 ),
                 rx.button(
                     "Delete",
@@ -55,11 +73,10 @@ def _user_row(user) -> rx.Component:
                     color_scheme="red",
                     variant="outline",
                     on_click=AdminUsersState.delete_user(
-                        user.id or 0,
+                        user.id,
                         AuthState.access_token,
                         AuthState.is_admin,
                     ),
-                    is_disabled=(user.id is None),
                 ),
                 spacing="2",
             ),

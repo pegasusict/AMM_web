@@ -1,10 +1,11 @@
 from AMM_web.state.base_state import BaseState
 from AMM_web.state.edit_helpers import none_if_blank, parse_int_optional
+from AMM_web.models.library import LabelSummary
 from AMM_web.services.library_client import library_service
 
 
 class LabelState(BaseState):
-    label = None
+    label: LabelSummary | None = None
     loading = False
     success_message: str | None = None
 
@@ -43,6 +44,12 @@ class LabelState(BaseState):
         self.label = await library_service.get_label(int(label_id), token)
         self._populate_form()
         self.loading = False
+
+    async def load_from_route(self, token: str = ""):
+        route_id = str(self.router.page.params.get("label_id", "")).strip()
+        if not route_id:
+            return
+        await self.load(route_id, token)
 
     async def save(self, token: str):
         if not self.label or self.label.id is None:

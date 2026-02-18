@@ -6,10 +6,9 @@ from ..components import detail_shell
 from ._detail_helpers import detail_content, field
 
 
-def file_detail(file_id: str):
+def file_detail(file_id: str = ""):
 
     return rx.container(
-        rx.on_mount(FileState.load(file_id, AuthState.access_token)),
         detail_shell(
             "File Detail",
             detail_content(
@@ -35,7 +34,7 @@ def file_detail(file_id: str):
                     field("Stage Type", FileState.file.stage_type),
                     field("Completed Tasks", FileState.file.completed_tasks, "[]"),
                 ],
-                edit_href=rx.concat("/files/", file_id, "/edit"),
+                edit_href="/files/" + file_id + "/edit",
             ),
         ),
     )

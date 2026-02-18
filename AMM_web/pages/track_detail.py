@@ -6,10 +6,9 @@ from ..components import detail_shell
 from ._detail_helpers import detail_content, field
 
 
-def track_detail(track_id: str):
+def track_detail(track_id: str = ""):
 
     return rx.container(
-        rx.on_mount(TrackState.load(track_id, AuthState.access_token)),
         detail_shell(
             "Track Detail",
             detail_content(
@@ -33,7 +32,7 @@ def track_detail(track_id: str):
                     field("Task IDs", TrackState.track.task_ids, "[]"),
                     field("Track Tag IDs", TrackState.track.tracktag_ids, "[]"),
                 ],
-                edit_href=rx.concat("/tracks/", track_id, "/edit"),
+                edit_href="/tracks/" + track_id + "/edit",
             ),
         ),
     )

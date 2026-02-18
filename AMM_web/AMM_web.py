@@ -27,6 +27,11 @@ from AMM_web.pages import (
     admin_users
 )
 from AMM_web.state.library_state import LibraryState
+from AMM_web.state.track_state import TrackState
+from AMM_web.state.album_state import AlbumState
+from AMM_web.state.person_state import PersonState
+from AMM_web.state.file_state import FileState
+from AMM_web.state.label_state import LabelState
 from AMM_web.state.server_state import ServerState
 from AMM_web.routes import (
     HOME_ROUTE,
@@ -79,13 +84,83 @@ app.add_page(admin_users, ADMIN_USERS_ROUTE, on_load=ServerState.check_server)
 app.add_page(admin_system, ADMIN_SYSTEM_ROUTE, on_load=ServerState.check_server)
 
 # dynamic pages
-app.add_page(track_detail, TRACK_DETAIL_ROUTE, on_load=ServerState.check_server)
-app.add_page(album_detail, ALBUM_DETAIL_ROUTE, on_load=ServerState.check_server)
-app.add_page(person_detail, PERSON_DETAIL_ROUTE, on_load=ServerState.check_server)
-app.add_page(file_detail, FILE_DETAIL_ROUTE, on_load=ServerState.check_server)
-app.add_page(label_detail, LABEL_DETAIL_ROUTE, on_load=ServerState.check_server)
-app.add_page(track_edit, TRACK_EDIT_ROUTE, on_load=ServerState.check_server)
-app.add_page(album_edit, ALBUM_EDIT_ROUTE, on_load=ServerState.check_server)
-app.add_page(person_edit, PERSON_EDIT_ROUTE, on_load=ServerState.check_server)
-app.add_page(file_edit, FILE_EDIT_ROUTE, on_load=ServerState.check_server)
-app.add_page(label_edit, LABEL_EDIT_ROUTE, on_load=ServerState.check_server)
+app.add_page(
+    track_detail,
+    TRACK_DETAIL_ROUTE,
+    on_load=[
+        ServerState.check_server,
+        TrackState.load_from_route(AuthState.access_token),
+    ],
+)
+app.add_page(
+    album_detail,
+    ALBUM_DETAIL_ROUTE,
+    on_load=[
+        ServerState.check_server,
+        AlbumState.load_from_route(AuthState.access_token),
+    ],
+)
+app.add_page(
+    person_detail,
+    PERSON_DETAIL_ROUTE,
+    on_load=[
+        ServerState.check_server,
+        PersonState.load_from_route(AuthState.access_token),
+    ],
+)
+app.add_page(
+    file_detail,
+    FILE_DETAIL_ROUTE,
+    on_load=[
+        ServerState.check_server,
+        FileState.load_from_route(AuthState.access_token),
+    ],
+)
+app.add_page(
+    label_detail,
+    LABEL_DETAIL_ROUTE,
+    on_load=[
+        ServerState.check_server,
+        LabelState.load_from_route(AuthState.access_token),
+    ],
+)
+app.add_page(
+    track_edit,
+    TRACK_EDIT_ROUTE,
+    on_load=[
+        ServerState.check_server,
+        TrackState.load_from_route(AuthState.access_token),
+    ],
+)
+app.add_page(
+    album_edit,
+    ALBUM_EDIT_ROUTE,
+    on_load=[
+        ServerState.check_server,
+        AlbumState.load_from_route(AuthState.access_token),
+    ],
+)
+app.add_page(
+    person_edit,
+    PERSON_EDIT_ROUTE,
+    on_load=[
+        ServerState.check_server,
+        PersonState.load_from_route(AuthState.access_token),
+    ],
+)
+app.add_page(
+    file_edit,
+    FILE_EDIT_ROUTE,
+    on_load=[
+        ServerState.check_server,
+        FileState.load_from_route(AuthState.access_token),
+    ],
+)
+app.add_page(
+    label_edit,
+    LABEL_EDIT_ROUTE,
+    on_load=[
+        ServerState.check_server,
+        LabelState.load_from_route(AuthState.access_token),
+    ],
+)

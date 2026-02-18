@@ -82,8 +82,8 @@ def _track_panel() -> rx.Component:
         ),
         _load_row(
             placeholder="Track ID",
-            value=SearchState.track_id,
-            setter=SearchState.set_track_id,
+            value=SearchState.search_track_id,
+            setter=SearchState.set_search_track_id,
             on_load=SearchState.load_track(AuthState.access_token),
         ),
         rx.cond(
@@ -158,8 +158,8 @@ def _album_panel() -> rx.Component:
         ),
         _load_row(
             placeholder="Album ID",
-            value=SearchState.album_id,
-            setter=SearchState.set_album_id,
+            value=SearchState.search_album_id,
+            setter=SearchState.set_search_album_id,
             on_load=SearchState.load_album(AuthState.access_token),
         ),
         rx.cond(
@@ -238,8 +238,8 @@ def _person_panel() -> rx.Component:
         ),
         _load_row(
             placeholder="Person ID",
-            value=SearchState.person_id,
-            setter=SearchState.set_person_id,
+            value=SearchState.search_person_id,
+            setter=SearchState.set_search_person_id,
             on_load=SearchState.load_person(AuthState.access_token),
         ),
         rx.cond(
@@ -316,8 +316,8 @@ def _label_panel() -> rx.Component:
         ),
         _load_row(
             placeholder="Label ID",
-            value=SearchState.label_id,
-            setter=SearchState.set_label_id,
+            value=SearchState.search_label_id,
+            setter=SearchState.set_search_label_id,
             on_load=SearchState.load_label(AuthState.access_token),
         ),
         rx.cond(
