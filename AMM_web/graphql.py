@@ -42,7 +42,8 @@ def _mock_paginated_tracks(variables: dict[str, Any] | None) -> dict[str, Any]:
         {
             "id": offset + i + 1,
             "mbid": f"offline-track-{offset + i + 1}",
-            "title": f"Offline Track {offset + i + 1}",
+            "composed": "2026-01-01",
+            "releaseDate": "2026-01-01",
         }
         for i in range(limit)
     ]
@@ -90,26 +91,107 @@ def _mock_graphql(query: str, variables: dict[str, Any] | None) -> dict[str, Any
                 "getTrack": {
                     "id": track_id,
                     "mbid": f"offline-track-{track_id}",
-                    "title": f"Offline Track {track_id}",
+                    "fileIds": [],
+                    "albumTrackIds": [],
+                    "genreIds": [],
+                    "performerIds": [],
+                    "conductorIds": [],
+                    "composerIds": [],
+                    "lyricistIds": [],
+                    "producerIds": [],
+                    "taskIds": [],
+                    "tracktagIds": [],
                 }
             }
         }
     if "getAlbum(" in query:
         values = variables or {}
         album_id = int(values.get("albumId", 1))
-        return {"data": {"getAlbum": {"id": album_id, "title": f"Album {album_id}"}}}
+        return {
+            "data": {
+                "getAlbum": {
+                    "id": album_id,
+                    "title": f"Album {album_id}",
+                    "albumTrackIds": [],
+                    "genreIds": [],
+                    "artistIds": [],
+                    "conductorIds": [],
+                    "composerIds": [],
+                    "lyricistIds": [],
+                    "producerIds": [],
+                }
+            }
+        }
     if "getPerson(" in query:
         values = variables or {}
         person_id = int(values.get("personId", 1))
-        return {"data": {"getPerson": {"id": person_id, "fullName": f"Person {person_id}"}}}
+        return {
+            "data": {
+                "getPerson": {
+                    "id": person_id,
+                    "fullName": f"Person {person_id}",
+                    "performedTrackIds": [],
+                    "conductedTrackIds": [],
+                    "composedTrackIds": [],
+                    "lyricTrackIds": [],
+                    "producedTrackIds": [],
+                    "performedAlbumIds": [],
+                    "conductedAlbumIds": [],
+                    "composedAlbumIds": [],
+                    "lyricAlbumIds": [],
+                    "producedAlbumIds": [],
+                    "taskIds": [],
+                    "labelIds": [],
+                }
+            }
+        }
     if "getLabel(" in query:
         values = variables or {}
         label_id = int(values.get("labelId", 1))
-        return {"data": {"getLabel": {"id": label_id, "name": f"Label {label_id}"}}}
+        return {"data": {"getLabel": {"id": label_id, "name": f"Label {label_id}", "childIds": [], "albumIds": []}}}
+    if "getFile(" in query:
+        values = variables or {}
+        file_id = int(values.get("fileId", 1))
+        return {
+            "data": {
+                "getFile": {
+                    "id": file_id,
+                    "audioIp": "127.0.0.1",
+                    "imported": "2026-01-01T00:00:00Z",
+                    "processed": "2026-01-01T00:10:00Z",
+                    "bitrate": 320000,
+                    "sampleRate": 44100,
+                    "channels": 2,
+                    "fileType": "audio",
+                    "fileSize": 12345678,
+                    "fileName": f"offline-{file_id}.flac",
+                    "fileExtension": ".flac",
+                    "codec": "flac",
+                    "duration": 245,
+                    "trackId": 1,
+                    "taskId": 1,
+                    "filePath": f"/music/offline-{file_id}.flac",
+                    "stageType": 0,
+                    "completedTasks": ["imported", "parsed"],
+                }
+            }
+        }
     if "playlists" in query:
-        return {"data": {"playlists": [{"id": 1, "name": "Offline Playlist", "trackIds": [1, 2, 3]}]}}
+        return {
+            "data": {
+                "playlists": [
+                    {
+                        "id": 1,
+                        "name": "Offline Playlist",
+                        "userId": 1,
+                        "playlistTrackIds": [1, 2, 3],
+                        "trackIds": [1, 2, 3],
+                    }
+                ]
+            }
+        }
     if "queue" in query:
-        return {"data": {"queue": {"trackIds": [1, 2, 3]}}}
+        return {"data": {"queue": {"id": 1, "userId": 1, "trackIds": [1, 2, 3]}}}
     if "users(" in query:
         return {
             "data": {

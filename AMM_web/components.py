@@ -11,6 +11,8 @@ from AMM_web.auth_state import AuthState
 from AMM_web.state.server_state import ServerState
 
 
+CARD_BORDER = "1px solid #E2E8F0"
+
 def _read_env_value(key: str) -> str:
     """Read a config value from process env, with .env fallback."""
     value = os.getenv(key, "")
@@ -347,4 +349,72 @@ def player_shell(content: rx.Component) -> rx.Component:
         rx.cond(AuthState.is_authenticated, player_bar(), rx.fragment()),
         spacing="0",
         width="100%",
+    )
+
+def ro_field(label: str, value: rx.Var) -> rx.Component:
+    return rx.vstack(
+        rx.text(label, size="2", color="gray"),
+        rx.input(value=value, is_read_only=True),
+        spacing="1",
+        width="100%",
+        align_items="start",
+    )
+
+def entity_row(
+    *,
+    entity_id: rx.Var,
+    title: rx.Var,
+    route_prefix: str,
+):
+    return rx.box(
+        rx.hstack(
+            rx.text(
+                "#",
+                entity_id.to(str),
+                "  ",
+                title,
+                weight="medium",
+            ),
+            rx.spacer(),
+            rx.button(
+                "View",
+                size="2",
+                variant="outline",
+                on_click=rx.redirect(
+                    rx.concat("/", route_prefix, "/", entity_id)
+                ),
+                is_disabled=rx.cond(entity_id, False, True),
+            ),
+            spacing="3",
+            align_items="center",
+            width="100%",
+        ),
+        border=CARD_BORDER,
+        border_radius="10px",
+        padding="0.75em",
+        width="100%",
+    )
+
+def breadcrumbs(*items: tuple[str, str]):
+    return rx.hstack(
+        *[
+            rx.link(label, href=href)
+            if href
+            else rx.text(label, weight="medium")
+            for label, href in items
+        ],
+        spacing="2",
+    )
+
+def detail_shell(title: str, body: rx.Component):
+    return rx.cond(
+        AuthState.is_authenticated,
+        rx.vstack(
+            navbar(),
+            rx.heading(title, size="7"),
+            body,
+            footer(),
+            spacing="4",
+        ),
+        rx.redirect("/login"),
     )

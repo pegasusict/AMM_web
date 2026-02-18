@@ -3,6 +3,7 @@
 from AMM_web.graphql import gql
 from AMM_web.models.library import (
     AlbumSummary,
+    FileSummary,
     LabelSummary,
     PersonSummary,
     PlaylistSummary,
@@ -27,7 +28,7 @@ class LibraryService:
         query GetTracks($limit: Int!, $offset: Int!) {
           getTracks(limit: $limit, offset: $offset) {
             total
-            items { id mbid }
+            items { id mbid composed releaseDate }
           }
         }
         """
@@ -44,7 +45,7 @@ class LibraryService:
         query GetAlbums($limit: Int!, $offset: Int!) {
           getAlbums(limit: $limit, offset: $offset) {
             total
-            items { id title }
+            items { id mbid title subtitle releaseDate labelId trackCount discCount }
           }
         }
         """
@@ -61,7 +62,7 @@ class LibraryService:
         query GetPersons($limit: Int!, $offset: Int!) {
           getPersons(limit: $limit, offset: $offset) {
             total
-            items { id fullName }
+            items { id mbid fullName firstName middleName lastName sortName }
           }
         }
         """
@@ -78,7 +79,7 @@ class LibraryService:
         query GetLabels($limit: Int!, $offset: Int!) {
           getLabels(limit: $limit, offset: $offset) {
             total
-            items { id name }
+            items { id name mbid description ownerId parentId founded defunct }
           }
         }
         """
@@ -95,7 +96,7 @@ class LibraryService:
             raise RuntimeError("Authentication required")
         query = """
         query Playlists {
-          playlists { id name trackIds }
+          playlists { id name userId playlistTrackIds trackIds }
         }
         """
         data = await gql(query, access_token=access_token)
@@ -109,7 +110,7 @@ class LibraryService:
             raise RuntimeError("Authentication required")
         query = """
         query Queue {
-          queue { trackIds }
+          queue { id userId trackIds }
         }
         """
         data = await gql(query, access_token=access_token)
@@ -121,7 +122,24 @@ class LibraryService:
     async def get_track(self, track_id: int, access_token: str | None = None) -> TrackSummary | None:
         query = """
         query GetTrack($trackId: Int!) {
-          getTrack(trackId: $trackId) { id mbid title }
+          getTrack(trackId: $trackId) {
+            id
+            composed
+            releaseDate
+            mbid
+            fileIds
+            albumTrackIds
+            keyId
+            genreIds
+            performerIds
+            conductorIds
+            composerIds
+            lyricistIds
+            producerIds
+            taskIds
+            lyricId
+            tracktagIds
+          }
         }
         """
         data = await gql(query, variables={"trackId": track_id}, access_token=access_token)
@@ -135,7 +153,27 @@ class LibraryService:
     async def get_album(self, album_id: int, access_token: str | None = None) -> AlbumSummary | None:
         query = """
         query GetAlbum($albumId: Int!) {
-          getAlbum(albumId: $albumId) { id title }
+          getAlbum(albumId: $albumId) {
+            id
+            mbid
+            title
+            titleSort
+            subtitle
+            releaseDate
+            releaseCountry
+            discCount
+            trackCount
+            taskId
+            labelId
+            albumTrackIds
+            genreIds
+            artistIds
+            conductorIds
+            composerIds
+            lyricistIds
+            producerIds
+            pictureId
+          }
         }
         """
         data = await gql(query, variables={"albumId": album_id}, access_token=access_token)
@@ -149,7 +187,32 @@ class LibraryService:
     async def get_person(self, person_id: int, access_token: str | None = None) -> PersonSummary | None:
         query = """
         query GetPerson($personId: Int!) {
-          getPerson(personId: $personId) { id fullName }
+          getPerson(personId: $personId) {
+            id
+            mbid
+            firstName
+            middleName
+            lastName
+            sortName
+            fullName
+            nickName
+            alias
+            dateOfBirth
+            dateOfDeath
+            pictureId
+            performedTrackIds
+            conductedTrackIds
+            composedTrackIds
+            lyricTrackIds
+            producedTrackIds
+            performedAlbumIds
+            conductedAlbumIds
+            composedAlbumIds
+            lyricAlbumIds
+            producedAlbumIds
+            taskIds
+            labelIds
+          }
         }
         """
         data = await gql(query, variables={"personId": person_id}, access_token=access_token)
@@ -163,7 +226,19 @@ class LibraryService:
     async def get_label(self, label_id: int, access_token: str | None = None) -> LabelSummary | None:
         query = """
         query GetLabel($labelId: Int!) {
-          getLabel(labelId: $labelId) { id name }
+          getLabel(labelId: $labelId) {
+            id
+            name
+            mbid
+            founded
+            defunct
+            description
+            ownerId
+            parentId
+            childIds
+            pictureId
+            albumIds
+          }
         }
         """
         data = await gql(query, variables={"labelId": label_id}, access_token=access_token)
@@ -173,6 +248,39 @@ class LibraryService:
         if not payload:
             return None
         return LabelSummary(**payload)
+    
+    async def get_file(self, file_id: int, access_token: str | None = None) -> FileSummary | None:
+        query = """
+        query GetFile($fileId: Int!) {
+          getFile(fileId: $fileId) {
+            id
+            audioIp
+            imported
+            processed
+            bitrate
+            sampleRate
+            channels
+            fileType
+            fileSize
+            fileName
+            fileExtension
+            codec
+            duration
+            trackId
+            taskId
+            filePath
+            stageType
+            completedTasks
+          }
+        }
+        """
+        data = await gql(query, variables={"fileId": file_id}, access_token=access_token)
+        if "errors" in data:
+            return None
+        payload = ((data.get("data") or {}).get("getFile"))
+        if not payload:
+            return None
+        return FileSummary(**payload)
 
     async def list_task_display(self, access_token: str | None = None) -> list[TaskDisplaySummary]:
         query = """

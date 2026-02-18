@@ -43,6 +43,23 @@ crossfading
 
 ## Client Connectivity Helpers
 
+## Single-Port Server Run
+
+Use this for server deployment when AMM_web must be reachable on one port (default `127.0.0.1:3000`):
+
+```bash
+./scripts/run_single_port.sh
+```
+
+Optional overrides:
+
+```bash
+AMM_WEB_HOST=127.0.0.1 AMM_WEB_PORT=3000 ./scripts/run_single_port.sh
+```
+
+Why this script: Reflex single-port production mode launches `granian`; the script prepends `.venv/bin` to `PATH` so startup is reliable.
+
+
 - Offline/mock mode for AMM_web:
   - `export AMM_OFFLINE_MODE=1`
   - This lets login/dashboard/search run without a live server.
